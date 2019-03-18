@@ -11,30 +11,30 @@ from .settings_proxy import *
 from .commands import *
 
 __all__ = [
-    # core
-    "core",
+	# core
+	"core",
 
-    # settings_proxy
-    "OverrideAuditOpenFileCommand",
-    "OverrideAuditEditSettingsCommand",
+	# settings_proxy
+	"OverrideAuditOpenFileCommand",
+	"OverrideAuditEditSettingsCommand",
 
-    # events/contexts
-    "OverrideAuditEventListener",
-    "OverrideAuditContextListener",
+	# events/contexts
+	"OverrideAuditEventListener",
+	"OverrideAuditContextListener",
 
-    # commands/*
-    "OverrideAuditPackageReportCommand",
-    "OverrideAuditOverrideReportCommand",
-    "OverrideAuditDiffReportCommand",
-    "OverrideAuditRefreshReportCommand",
-    "OverrideAuditToggleOverrideCommand",
-    "OverrideAuditDiffOverrideCommand",
-    "OverrideAuditDiffExternallyCommand",
-    "OverrideAuditEditOverrideCommand",
-    "OverrideAuditDeleteOverrideCommand",
-    "OverrideAuditFreshenOverrideCommand",
-    "OverrideAuditDiffPackageCommand",
-    "OverrideAuditFreshenPackageCommand",
-    "OverrideAuditDiffSingleCommand",
-    "OverrideAuditModifyMarkCommand"
+	# commands/*
+	"OverrideAuditPackageReportCommand",
+	"OverrideAuditOverrideReportCommand",
+	"OverrideAuditDiffReportCommand",
+	"OverrideAuditRefreshReportCommand",
+	"OverrideAuditToggleOverrideCommand",
+	"OverrideAuditDiffOverrideCommand",
+	"OverrideAuditDiffExternallyCommand",
+	"OverrideAuditEditOverrideCommand",
+	"OverrideAuditDeleteOverrideCommand",
+	"OverrideAuditFreshenOverrideCommand",
+	"OverrideAuditDiffPackageCommand",
+	"OverrideAuditFreshenPackageCommand",
+	"OverrideAuditDiffSingleCommand",
+	"OverrideAuditModifyMarkCommand"
 ]

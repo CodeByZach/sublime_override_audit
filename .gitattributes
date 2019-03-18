@@ -1,3 +1,6 @@
+.gitignore     export-ignore
 .gitattributes export-ignore
-.gitignore export-ignore
-.github/ export-ignore
+
+# Files & folders that should not be included in production.
+/.github/      export-ignore
+/docs/         export-ignore

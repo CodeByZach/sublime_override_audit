@@ -606,3 +606,11 @@ or new features.
 The tools in OverrideAudit are designed to help warn you when this is happening
 and allow you to easily see what has changed so you can decide how best to
 address the situation.
+	
+	
+-------------------------------------------------------------------------------
+	
+	
+## License ##
+
+OverrideAudit is licensed under the [MIT license](LICENSE).

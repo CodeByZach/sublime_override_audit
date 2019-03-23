@@ -962,14 +962,14 @@ class ContextHelper():
 			full_name = os.path.join(sublime.packages_path(), relative_name)
 			return os.path.isfile(full_name)
 
-        return False
+		return False
 
-    def override_unknown(self, view, ctx):
-        if ctx.has_target():
-            unknowns = view.settings().get("override_audit_unknown_overrides", {})
-            if ctx.package in unknowns:
-                if ctx.override in unknowns[ctx.package]:
-                    return True
+	def override_unknown(self, view, ctx):
+		if ctx.has_target():
+			unknowns = view.settings().get("override_audit_unknown_overrides", {})
+			if ctx.package in unknowns:
+				if ctx.override in unknowns[ctx.package]:
+					return True
 
 		return False
 

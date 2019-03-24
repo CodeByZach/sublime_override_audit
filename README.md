@@ -7,7 +7,7 @@ you are overriding, see what changes your override provides, and most
 importantly to  provide warnings to you when the file you are overriding has
 been changed by its author so you can determine what course of action to take.
 
-If you're new to OverrideAudit, there is an [introductory video](https://www.youtube.com/watch?v=qYeli46frR8)
+If you're new to OverrideAudit, you can visit the [homepage documentation](https://odatnurd.net/overrideaudit/). There is an [introductory video](https://www.youtube.com/watch?v=qYeli46frR8)
 available which shows some of the key features.
 
 -------------------------------------------------------------------------------

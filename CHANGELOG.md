@@ -5,8 +5,23 @@ Version ?.?.? (????-??-??)
 --------------------------
   * Loose files in an unpacked package that don't correspond to
     any files in an associated `sublime-package` file are now
-    shown in override reports annotated with `[?]` to indicate
-    that their status is unknown.
+    shown in override reports and bulk diffs annotated with `[?]`
+    to indicate that their status is unknown.
+
+  * Fix an issue where the temporary files created when an external
+    diff is performed might have different line endings than the
+    source file originally had.
+
+  * Include a new command to revert an existing override. This
+    replaces the file with a freshly unpacked version of the
+    underlying file. The new setting `confirm_revert` controls
+    whether the user gets asked to confirm this action before
+    it is carried out.
+
+  * Include a new command to create an override; this works very
+    similarly to PackageResourceViewer, but is implemented
+    differently in that it works with mini_diff if you have that
+    turned on.
 
 
 Version 2.0.0 (2019-03-14)

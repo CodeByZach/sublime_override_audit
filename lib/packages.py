@@ -405,7 +405,7 @@ class PackageInfo():
 				info = find_zip_entry(zFile, override_file)
 				file = codecs.EncodedFile(zFile.open(info, mode="rU"), "utf-8")
 				if as_list:
-				content = io.TextIOWrapper(file, encoding="utf-8").readlines()
+					content = io.TextIOWrapper(file, encoding="utf-8").readlines()
 				else:
 					content = io.TextIOWrapper(file, encoding="utf-8").read()
 

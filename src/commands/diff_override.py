@@ -21,10 +21,8 @@ class OverrideAuditDiffOverrideCommand(ContextHelper,sublime_plugin.TextCommand)
 		if oa_setting("save_on_diff") and ctx.is_diff is not None and not ctx.is_diff:
 			sView = target
 
-		callback = lambda thread: self._loaded(thread, target.window(), sView,
-											   ctx.package, ctx.override)
-		PackageListCollectionThread(target.window(), "Collecting Package List",
-									callback, name_list=ctx.package).start()
+		callback = lambda thread: self._loaded(thread, target.window(), sView, ctx.package, ctx.override)
+		PackageListCollectionThread(target.window(), "Collecting Package List", callback, name_list=ctx.package).start()
 
 	def _loaded(self, thread, window, save_view, package, override):
 		if save_view is not None:
@@ -32,8 +30,7 @@ class OverrideAuditDiffOverrideCommand(ContextHelper,sublime_plugin.TextCommand)
 				save_view.run_command("save")
 
 		pkg_list = thread.pkg_list
-		diff_override(window, pkg_list[package], override,
-					  diff_only=True, force_reuse=True)
+		diff_override(window, pkg_list[package], override, diff_only=True, force_reuse=True)
 
 	def description(self, **kwargs):
 		ctx = self.view_context(None, False, **kwargs)

@@ -15,10 +15,8 @@ class OverrideAuditDiffExternallyCommand(ContextHelper,sublime_plugin.TextComman
 		target = self.view_target(self.view, **kwargs)
 		ctx = self.view_context(target, False, **kwargs)
 
-		callback = lambda thread: self._loaded(thread, target.window(),
-											   ctx.package, ctx.override)
-		PackageListCollectionThread(target.window(), "Collecting Package List",
-									callback, name_list=ctx.package).start()
+		callback = lambda thread: self._loaded(thread, target.window(), ctx.package, ctx.override)
+		PackageListCollectionThread(target.window(), "Collecting Package List", callback, name_list=ctx.package).start()
 
 	def _loaded(self, thread, window, package, override):
 		pkg_list = thread.pkg_list
@@ -35,6 +33,4 @@ class OverrideAuditDiffExternallyCommand(ContextHelper,sublime_plugin.TextComman
 
 	def is_enabled(self, **kwargs):
 		ctx = self.view_context(None, False, **kwargs)
-		return True if (ctx.has_target() and
-						ctx.is_diff and
-						oa_can_diff_externally()) else False
+		return True if (ctx.has_target() and ctx.is_diff and oa_can_diff_externally()) else False

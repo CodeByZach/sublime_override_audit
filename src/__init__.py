@@ -14,8 +14,8 @@ __all__ = [
 	# core
 	"core",
 
-    # browse
-    "browse",
+	# browse
+	"browse",
 
 	# settings_proxy
 	"OverrideAuditOpenFileCommand",
@@ -23,7 +23,7 @@ __all__ = [
 
 	# events/contexts
 	"OverrideAuditEventListener",
-    "CreateOverrideEventListener",
+	"CreateOverrideEventListener",
 	"OverrideAuditContextListener",
 
 	# commands/*

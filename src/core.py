@@ -29,9 +29,7 @@ from ..lib.utils import SettingsGroup
 # A group of view settings that indicate that a view is either an override or a
 # diff of one. The settings indicate what package and override the contents of
 # the buffer represents.
-override_group = SettingsGroup("override_audit_package",
-							   "override_audit_override",
-							   "override_audit_diff")
+override_group = SettingsGroup("override_audit_package", "override_audit_override", "override_audit_diff")
 
 
 ###----------------------------------------------------------------------------
@@ -139,8 +137,7 @@ def packages_with_overrides(pkg_list, name_list=None):
 	filtered to only include packages whose name also exists in the name list.
 	"""
 	ignored = oa_setting("ignore_overrides_in")
-	items = [name for name, pkg in pkg_list if len(pkg.override_files()) > 0
-											   and name not in ignored]
+	items = [name for name, pkg in pkg_list if len(pkg.override_files()) > 0 and name not in ignored]
 
 	if name_list is not None:
 		items = list(filter(lambda name: name in name_list, items))
@@ -172,11 +169,11 @@ def decorate_pkg_name(pkg_info, name_only=False):
 		suffix += " [EXPIRED]"
 
 	return "[{}{}{}] {}{}".format(
-			   "S" if pkg_info.shipped_path is not None else " ",
-			   "I" if pkg_info.installed_path is not None else " ",
-			   "U" if pkg_info.unpacked_path is not None else " ",
-			   pkg_name,
-			   suffix)
+			"S" if pkg_info.shipped_path is not None else " ",
+			"I" if pkg_info.installed_path is not None else " ",
+			"U" if pkg_info.unpacked_path is not None else " ",
+			pkg_name,
+			suffix)
 
 
 def open_override(window, pkg_name, override):
@@ -269,14 +266,12 @@ def diff_override(window, pkg_info, override,
 		prefix = diff.hdr if diff.is_empty and empty_diff_hdr else ""
 		content = prefix + "No differences found" if result == "" else result
 
-		view = output_to_view(window, title, content, reuse, clear,
-							  "Packages/Diff/Diff.tmLanguage")
+		view = output_to_view(window, title, content, reuse, clear, "Packages/Diff/Diff.tmLanguage")
 
 		override_group.apply(view, pkg_info.name, override, True)
 
 	callback = lambda thread: _process_diff(thread)
-	OverrideDiffThread(window, "Diffing Override", callback,
-					   pkg_info=pkg_info, override=override).start()
+	OverrideDiffThread(window, "Diffing Override", callback, pkg_info=pkg_info, override=override).start()
 
 
 def diff_externally(window, pkg_info, override):
@@ -303,8 +298,8 @@ def diff_externally(window, pkg_info, override):
 	else:
 		callback = lambda thread: log(thread.result, status=True)
 		DiffExternallyThread(window, "Launching external diff", callback,
-							 diff_args=diff_args,
-							 base=base_file, override=override_file).start()
+							diff_args=diff_args,
+							base=base_file, override=override_file).start()
 
 
 def diff_with_sublimerge(base_file, override_file):
@@ -334,8 +329,7 @@ def revert_override(window, pkg_info, override):
 			return
 
 	callback = lambda thread: log(thread.result, status=True)
-	OverrideRevertThread(window, "Reverting File", callback,
-					   pkg_info=pkg_info, override=override).start()
+	OverrideRevertThread(window, "Reverting File", callback, pkg_info=pkg_info, override=override).start()
 
 
 def find_override(view, pkg_name, override):
@@ -376,8 +370,7 @@ def extract_packed_override(pkg_info, override):
 	"""
 	override_type, contents = pkg_info.packed_override_contents(override, as_list=False)
 	if override_type is None:
-		return log("Unable to extract %s/%s; unable to locate base file",
-					pkg_info.name, override)
+		return log("Unable to extract %s/%s; unable to locate base file", pkg_info.name, override)
 
 	name,ext = os.path.splitext(override)
 	prefix = "{pre}_{pkg}_{name}_".format(
@@ -396,8 +389,7 @@ def extract_packed_override(pkg_info, override):
 		return base_name
 
 	except Exception as err:
-		return log("Error creating temporary file for %s/%s: %s",
-				   pkg_info.name, override, str(err))
+		return log("Error creating temporary file for %s/%s: %s", pkg_info.name, override, str(err))
 
 
 def delete_packed_override(filename):
@@ -450,8 +442,7 @@ class AutoReportTrigger():
 	def __load_status(self):
 		self.last_build = "0"
 		self.force_report = False
-		self.status_file = os.path.join(sublime.packages_path(), "User",
-										"OverrideAudit.status")
+		self.status_file = os.path.join(sublime.packages_path(), "User", "OverrideAudit.status")
 
 		if os.path.isfile(self.status_file):
 			with open(self.status_file) as file:
@@ -558,8 +549,7 @@ class OverrideDiffThread(BackgroundWorkerThread):
 		if binary_patterns is not None:
 			pkg_info.set_binary_pattern(binary_patterns)
 
-		self.diff = pkg_info.override_diff(override, context_lines,
-										   binary_result="<File is binary>")
+		self.diff = pkg_info.override_diff(override, context_lines, binary_result="<File is binary>")
 
 
 ###----------------------------------------------------------------------------
@@ -582,13 +572,11 @@ class OverrideFreshenThread(BackgroundWorkerThread):
 			zTime = datetime(*entry.date_time).timestamp()
 
 			if zTime > now:
-				log("Warning: The packaged '%s/%s' file is from the future" ,
-					 pkg_name, override)
+				log("Warning: The packaged '%s/%s' file is from the future", pkg_name, override)
 				new_mtime = (now, zTime + 1)
 
 			with os.fdopen(os.open(fname, os.O_RDONLY)) as f:
-				os.utime(f.fileno() if os.utime in os.supports_fd else fname,
-						 new_mtime)
+				os.utime(f.fileno() if os.utime in os.supports_fd else fname, new_mtime)
 
 			# TODO: This command could take a list of overrides in the package
 			# and handle them all at once.
@@ -709,9 +697,7 @@ class ReportGenerationThread(BackgroundWorkerThread):
 	Helper base class for generating a report in a background thread.
 	"""
 	def __init__(self, window, spinner_text, current_view, **kwargs):
-		super().__init__(window, spinner_text,
-						 lambda thread: self._display_report(thread),
-						 **kwargs)
+		super().__init__(window, spinner_text, lambda thread: self._display_report(thread), **kwargs)
 		self.current_view = current_view
 
 	def _generation_time(self):
@@ -727,17 +713,14 @@ class ReportGenerationThread(BackgroundWorkerThread):
 		reuse = True if force_reuse else oa_setting("reuse_views")
 		clear = True if force_reuse else oa_setting("clear_existing")
 
-		view = output_to_view(self.window, self.caption, self.content,
-							  reuse, clear, self.syntax,
-							  current_view=self.current_view)
+		view = output_to_view(self.window, self.caption, self.content, reuse, clear, self.syntax, current_view=self.current_view)
 		view.settings().set("override_audit_report_type", self.report_type)
 
 		if self.settings is not None:
 			for setting,value in self.settings.items():
 				view.settings().set(setting, value)
 
-	def _set_content(self, caption, content, report_type, syntax,
-					 settings=None):
+	def _set_content(self, caption, content, report_type, syntax, settings=None):
 		self.caption = caption
 		self.content = content
 		self.report_type = report_type

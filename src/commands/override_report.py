@@ -33,15 +33,13 @@ class OverrideReportThread(ReportGenerationThread):
 		unknown_files = {}
 		result = []
 		if only_expired:
-			result.append("WARNING: Showing only expired overrides!\n"
-						  "WARNING: Non-expired overrides may exist!\n")
+			result.append("WARNING: Showing only expired overrides!\nWARNING: Non-expired overrides may exist!\n")
 		result.append(self._generation_time())
 
 		displayed = 0
 		for pkg_name, pkg_info in pkg_list:
 			if pkg_name not in ignored:
-				if self._output_package(result, pkg_info, only_expired,
-										expired_pkgs, unknown_files):
+				if self._output_package(result, pkg_info, only_expired, expired_pkgs, unknown_files):
 					displayed += 1
 
 		if displayed == 0:
@@ -50,12 +48,11 @@ class OverrideReportThread(ReportGenerationThread):
 
 			result.append(self._empty_msg())
 
-		self._set_content(title, result, report_type,
-						  oa_syntax("OA-OverrideReport"),
-						  {
+		self._set_content(title, result, report_type, oa_syntax("OA-OverrideReport"),
+						{
 							"override_audit_expired_pkgs": expired_pkgs,
 							"override_audit_unknown_overrides": unknown_files
-						  })
+						})
 
 	def _output_package(self, result, pkg_info, only_expired, expired_pkgs, unknown_files):
 		shipped_override = pkg_info.has_possible_overrides(simple=False)
@@ -63,7 +60,7 @@ class OverrideReportThread(ReportGenerationThread):
 
 		expired_overrides = pkg_info.expired_override_files(simple=True)
 		expired_pkg = bool(pkg_info.expired_override_files(simple=False))
-		pkg_files         = pkg_info.unpacked_contents()
+		pkg_files = pkg_info.unpacked_contents()
 
 		unknown_overrides = pkg_info.unknown_override_files()
 
@@ -82,9 +79,7 @@ class OverrideReportThread(ReportGenerationThread):
 
 			unknown_files[pkg_info.name] = list(unknown_overrides)
 
-		self._output_overrides(result, pkg_files, normal_overrides,
-							   expired_overrides, unknown_overrides,
-							   only_expired)
+		self._output_overrides(result, pkg_files, normal_overrides, expired_overrides, unknown_overrides, only_expired)
 		result.append("")
 
 		return True
@@ -107,8 +102,7 @@ class OverrideReportThread(ReportGenerationThread):
 			result.append(fmt.format(item))
 
 	def _empty_msg(self):
-		return "No packages with %soverrides found" % (
-				"expired " if self.args["only_expired"] else "")
+		return "No packages with %soverrides found" % ("expired " if self.args["only_expired"] else "")
 
 	def _notify_empty(self):
 		log(self._empty_msg(), status=True)
@@ -123,7 +117,7 @@ class OverrideAuditOverrideReportCommand(sublime_plugin.WindowCommand):
 	"""
 	def run(self, force_reuse=False, only_expired=False, ignore_empty=False):
 		OverrideReportThread(self.window, "Generating Override Report",
-							 self.window.active_view(),
-							 force_reuse=force_reuse,
-							 only_expired=only_expired,
-							 ignore_empty=ignore_empty).start()
+							self.window.active_view(),
+							force_reuse=force_reuse,
+							only_expired=only_expired,
+							ignore_empty=ignore_empty).start()

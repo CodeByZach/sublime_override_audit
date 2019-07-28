@@ -94,7 +94,7 @@ class BulkDiffReportThread(ReportGenerationThread):
 			if file in unknown_overrides:
 				diff = OverrideDiffResult(None, None, (" " * 8) + "<File does not exist in the underlying package file; cannot diff>")
 			else:
-			diff = pkg_info.override_diff(file, context_lines, empty_result="No differences found", binary_result="<File is binary>", indent=8)
+				diff = pkg_info.override_diff(file, context_lines, empty_result="No differences found", binary_result="<File is binary>", indent=8)
 
 			if diff is None:
 				content = (" " * 8) + ("Error opening or decoding file; is it UTF-8 or Binary?")

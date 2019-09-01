@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 
 from ..core import oa_syntax, oa_setting, decorate_pkg_name, log
+from ..core import get_ignore_unknown_patterns
 from ..core import packages_with_overrides, ReportGenerationThread
 from ...lib.packages import PackageList, OverrideDiffResult
 
@@ -35,12 +36,15 @@ class BulkDiffReportThread(ReportGenerationThread):
 		context_lines = oa_setting("diff_context_lines")
 		binary_patterns = oa_setting("binary_file_patterns")
 
+		ignore_patterns = get_ignore_unknown_patterns()
+
 		result = []
 		title = "Override Diff Report: "
 		description = "Bulk Diff Report for overrides in"
 		report_type = ":bulk_all"
 		expired_pkgs = []
 		unknown_files = {}
+		packages = {}
 
 		if len(names) == 1 and single_package:
 			title += names[0]
@@ -57,23 +61,27 @@ class BulkDiffReportThread(ReportGenerationThread):
 
 		for name in names:
 			pkg_info = pkg_list[name]
+
 			if binary_patterns is not None:
 				pkg_info.set_binary_pattern(binary_patterns)
 
 			result.append(decorate_pkg_name(pkg_info))
-			self._perform_diff(pkg_info, context_lines, result, expired_pkgs, unknown_files)
+			self._perform_diff(pkg_info, context_lines, result, expired_pkgs, unknown_files, ignore_patterns)
+
+			packages[name] = pkg_info.status(detailed=True)
 
 		self._set_content(title, result, report_type, oa_syntax("OA-Diff"),
 						{
+							"override_audit_report_packages": packages,
 							"override_audit_expired_pkgs": expired_pkgs,
 							"override_audit_unknown_overrides": unknown_files
 						})
 
-	def _perform_diff(self, pkg_info, context_lines, result, expired_pkgs, unknown_files):
-		pkg_files = pkg_info.unpacked_contents()
+	def _perform_diff(self, pkg_info, context_lines, result, expired_pkgs, unknown_files, ignore_patterns):
 		override_list = pkg_info.override_files(simple=True)
 		expired_list = pkg_info.expired_override_files(simple=True)
 		unknown_overrides = pkg_info.unknown_override_files()
+		pkg_files = pkg_info.unpacked_contents_unknown_filtered(ignore_patterns)
 
 		empty_diff_hdr = oa_setting("diff_empty_hdr")
 

@@ -13,6 +13,7 @@ import os
 import threading
 import subprocess
 import sys
+import re
 
 
 from ..lib.packages import PackageInfo, PackageList, PackageFileSet
@@ -54,6 +55,11 @@ def loaded():
 		"confirm_revert": True,
 		"report_on_unignore": True,
 		"external_diff": False,
+		"ignore_unknown_overrides": [
+			"^\\.git/",
+			"^\\.svn/",
+			"^\\.hg/"
+		],
 
 		# Inherits from user preferences
 		"binary_file_patterns": None
@@ -125,6 +131,36 @@ def oa_can_diff_externally():
 		return False
 
 	return False
+
+
+def get_ignore_unknown_patterns():
+	"""
+	Fetch the value of the setting that tells us what unknown overrides we
+	should ignore in reports. The regular expressions from the settings file
+	(if any) are compiled in the returned list.
+
+	When the setting is a boolean, the result is either an empty list or a list
+	with a regular expression that will match everything, depending on the
+	state of the boolean.
+	"""
+	pattern_list = oa_setting("ignore_unknown_overrides")
+
+	# Only be case sensitive on Linux where the file system is case sensitive
+	re_opts = 0 if sublime.platform() == "linux" else re.IGNORECASE
+	patterns = []
+
+	if isinstance(pattern_list, bool):
+		return [re.compile(r'.')] if pattern_list else []
+
+	# Invalid regex patterns are ignored with a warning
+	for regex in pattern_list:
+		try:
+			patterns.append(re.compile(regex, re_opts))
+		except Exception as e:
+			log("Invalid ignore_unknown_overrides regex '%s': %s",
+				regex, str(e), status=True)
+
+	return patterns
 
 
 def packages_with_overrides(pkg_list, name_list=None):
@@ -323,7 +359,7 @@ def diff_with_sublimerge(base_file, override_file):
 def revert_override(window, pkg_info, override):
 	if oa_setting("confirm_revert"):
 		target = override_display(os.path.join(pkg_info.name, override))
-		msg = "Confirm revert:\n\n".format(target)
+		msg = "Confirm revert:\n\n{}".format(target)
 
 		if sublime.yes_no_cancel_dialog(msg) != sublime.DIALOG_YES:
 			return

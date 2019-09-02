@@ -100,7 +100,7 @@ def _is_compatible_version(version_range):
 		min_version = int(range_match.group(1))
 		max_version = int(range_match.group(2))
 	else:
-	return None
+		return None
 
 	if min_version > int(sublime.version()):
 		return False

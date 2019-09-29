@@ -1,18 +1,24 @@
 OverrideAudit ChangeLog
 =======================
 
-Version ?.?.? (????-??-??)
+Version 2.1.0 (2019-09-15)
 --------------------------
-  * Include a new command to create an override; this works very
-    similarly to PackageResourceViewer, but is implemented
-    differently in that it works with mini_diff if you have that
-    turned on.
+  * New command to create an override or promote a view opened
+    by `View Package File` to a potential new override. Both are
+    available from the main menu and the command palette as
+    appropriate, as well as package name context menus.
 
-  * Include a new command to revert an existing override. This
-    replaces the file with a freshly unpacked version of the
-    underlying file. The new setting `confirm_revert` controls
-    whether the user gets asked to confirm this action before
-    it is carried out.
+  * New setting `mini_diff_underlying` (default: `true`) that
+    sets the mini diff functionality in override edit views to
+    diff against the underlying package file instead of the file
+    on disk. Requires `mini_diff` to be enabled in your user
+    preferences.
+
+  * New command to revert an existing override. This replaces
+    the file with a freshly unpacked version of the underlying
+    file. The new setting `confirm_revert` controls whether the
+    user gets asked to confirm this action before it is carried
+    out.
 
   * Loose files in an unpacked package that don't correspond to
     any files in an associated `sublime-package` file are now
@@ -24,7 +30,12 @@ Version ?.?.? (????-??-??)
 
   * Include hover popups for packages in reports. The popup gives
     more detailed package information, displays some help
-    information on click, and can trigger reports as well.
+    information on click, and can trigger some commands as well.
+    This is currently a work in progress.
+
+  * Fix a bug in bulk diff context menu items in reports; they
+    would appear disabled instead of hiding themselves. They're
+    now also smarter about when they enable themselves.
 
   * Fix a bug in which a package was only considered a dependency
     if it was an unpacked package. The package control bootstrap

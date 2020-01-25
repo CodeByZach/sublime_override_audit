@@ -15,7 +15,8 @@
 						"id": "override-audit",
 						"children":
 						[
-							{ "caption": "Create Override…",                   "command": "override_audit_create_override"},
+							{ "caption": "Create Override…",                   "command": "override_audit_create_override" },
+							{ "caption": "Open Resource…",                     "command": "override_audit_create_override", "args": { "include_existing": true } },
 							{ "caption": "Override Current Resource",          "command": "override_audit_context_create_override"},
 							{ "caption": "-" },
 							{ "caption": "Package Report",                     "command": "override_audit_package_report" },

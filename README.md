@@ -1,6 +1,6 @@
 OverrideAudit
 =============
-[![Latest Release](https://img.shields.io/github/tag/EatBreatheCode/sublime_override_audit.svg?label=version)](https://github.com/EatBreatheCode/sublime_override_audit/releases)
+[![Latest Release](https://img.shields.io/github/tag/CodeByZach/sublime_override_audit.svg?label=version)](https://github.com/CodeByZach/sublime_override_audit/releases)
 
 OverrideAudit is a package for Sublime Text 3 that helps you detect and work
 with your package overrides, allowing you to easily see a list of files that

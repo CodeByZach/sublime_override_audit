@@ -1,18 +1,61 @@
 OverrideAudit ChangeLog
 =======================
 
-Version ?.?.? (????-??-??)
+Version 2.2.1 (2020-02-26)
 --------------------------
-  * Include a new command to create an override; this works very
-    similarly to PackageResourceViewer, but is implemented
-    differently in that it works with mini_diff if you have that
-    turned on.
+  * The `Open Resource` command was incorrectly hiding
+    packages that are not represented by a `sublime-package`
+    file.
 
-  * Include a new command to revert an existing override. This
-    replaces the file with a freshly unpacked version of the
-    underlying file. The new setting `confirm_revert` controls
-    whether the user gets asked to confirm this action before
-    it is carried out.
+    This made it impossible to open a package resource from
+    a purely unpacked package (such as the `User` package).
+    This is now resolved.
+
+Version 2.2.0 (2020-01-21)
+--------------------------
+  * Include a new command to open a resource for viewing, which
+    works the same as the PackageResourceViewer command of the
+    same name. This is functionally somewhat similar to the built
+    in `View Package File` command, but prompts you for the file
+    in a different manner; overrides are also annotated in the
+    list.
+
+  * For packages that contain plugins, the hover popup on reports
+    now indicates what version of Python the plugins in that
+    package are running in. This provides an indication of that
+    package containing a plugin while also allowing for the
+    inclusion of newer versions of Python being supported in
+    Sublime in the future.
+
+  * Fix a problem where some commands did not reload on package
+    update properly. This is not a particularly big deal (and
+    restarting Sublime would resolve the issue anyway).
+
+Version 2.1.1 (2019-11-05)
+--------------------------
+  * Fix an issue with the new `mini_diff_underlying` setting in
+    which if an override was open when you quit Sublime, on
+    restart the incremental diff indicators would not properly
+    track the underlying package file.
+
+Version 2.1.0 (2019-09-15)
+--------------------------
+  * New command to create an override or promote a view opened
+    by `View Package File` to a potential new override. Both are
+    available from the main menu and the command palette as
+    appropriate, as well as package name context menus.
+
+  * New setting `mini_diff_underlying` (default: `true`) that
+    sets the mini diff functionality in override edit views to
+    diff against the underlying package file instead of the file
+    on disk. Requires `mini_diff` to be enabled in your user
+    preferences.
+
+  * New command to revert an existing override. This replaces
+    the file with a freshly unpacked version of the underlying
+    file. The new setting `confirm_revert` controls whether the
+    user gets asked to confirm this action before it is carried
+    out.
 
   * Loose files in an unpacked package that don't correspond to
     any files in an associated `sublime-package` file are now
@@ -24,7 +67,12 @@ Version ?.?.? (????-??-??)
 
   * Include hover popups for packages in reports. The popup gives
     more detailed package information, displays some help
-    information on click, and can trigger reports as well.
+    information on click, and can trigger some commands as well.
+    This is currently a work in progress.
+
+  * Fix a bug in bulk diff context menu items in reports; they
+    would appear disabled instead of hiding themselves. They're
+    now also smarter about when they enable themselves.
 
   * Fix a bug in which a package was only considered a dependency
     if it was an unpacked package. The package control bootstrap

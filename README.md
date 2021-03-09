@@ -7,8 +7,10 @@ you are overriding, see what changes your override provides, and most
 importantly to  provide warnings to you when the file you are overriding has
 been changed by its author so you can determine what course of action to take.
 
-If you're new to OverrideAudit, you can visit the [homepage documentation](https://odatnurd.net/overrideaudit/). There is an [introductory video](https://www.youtube.com/watch?v=qYeli46frR8)
-available which shows some of the key features.
+If you're new to OverrideAudit, there is an [introductory video](https://youtu.be/qYeli46frR8)
+available which shows some of the key features of the package. See also the
+[new features](https://youtu.be/NEX9IxLHr_0) added in version 2.1, which are
+not covered in the intro video.
 
 -------------------------------------------------------------------------------
 
@@ -212,6 +214,10 @@ and `diff_unchanged` settings and operates as if they are set to `true`, `true`
 and `diff` respectively in order to ensure that you don't end up with a large
 number of duplicate views.
 
+In Override edit views, the `mini_diff_underlying` setting can be used to set
+the diff indicators in the buffer to diff against the underlying package file
+being overridden instead of the file as it appears on disk.
+
 
 ## `OverrideAudit: Revert Current Override` ###
 
@@ -254,16 +260,51 @@ which causes the command to be hidden.
 
 ### `OverrideAudit: Create Override` ###
 
-This command allows you to create a new override by prompting you for the
-package and resource to override. The prompt will display only packages that
-can contain an override (i.e. packages that are not represented by a
-`sublime-package` file are not eligible) and will only display package resources
-that are not already overridden.
+This command is available from the main menu and command palette and allows you
+to create a new override by by prompting you for the package and resource to
+override. The prompt will display only packages that can contain an override
+(i.e. packages that are not represented by a `sublime-package` file or which
+are currently in the `ignored_packages` list are not eligible) and will only
+display package resources that are not already overridden.
 
 When a resource is selected, a new buffer is opened showing the contents of the
 underlying resource, allowing you to make any changes desired. The override is
 not created until you save the file, so you can close the tab at any point
 (even after making edits) without consequence.
+
+When the buffer is saved for the first time, OverrideAudit will ensure that the
+correct file structure under the `Packages` folder is created and place the new
+override at the correct location.
+
+The `mini_diff_underlying` setting can be used to set up the diff markers in the
+gutter to diff against the base package file, allowing you to more easily track
+your changes.
+
+
+### `OverrideAudit: Open Resource` ###
+
+This command is available from the main menu and command palette and allows you
+to open any package resource for viewing (and potentially for creating an
+override). This works similarly to the `Create Override` command except that
+here all package resources are displayed, and any that are overrides will be
+annotated in the panel.
+
+WHen a resource is selected, that file is opened for viewing. If the file is an
+override, then you can edit the file as per normal; regular resources will be
+opened as read-only and require you to use the `Override Current Resource`
+command in order to make them editable.
+
+
+### `OverrideAudit: Override Current Resource` ###
+
+This command is available from the main menu and the command palette whenever
+the current view represents a package resource that has been opened via the
+Sublime Text `View Package File` command in the command palette.
+
+This command immediately promotes the current buffer to a potential new
+override as if you used the `OverrideAudit: Create Override` command and
+selected the appropriate package and resource. As with that command, the
+override is not created until you save for the first time.
 
 
 ### `OverrideAudit: Delete Override` ###
@@ -458,6 +499,25 @@ This option has no effect for a buffer with unsaved changes that represents a
 file that no longer exists on disk (i.e. you have opened the override and then
 deleted it) to ensure that you don't accidentally resurrect a deleted file by
 saving it again.
+
+
+### `mini_diff_underlying`: true/false (Default: true) ###
+
+This setting controls how the Sublime Text `mini_diff` functionality interacts
+with your overrides when you're editing them (including when they are initially
+created by the `Create Override` command).
+
+When enabled, while editing an override the file that Sublime uses to calculate
+the diff indicators in the gutter will be set to the unpacked version of the
+override you're working on.
+
+This allows you to use the internal Sublime functionality for jumping between
+changes to easily navigate your override, including showing you inline diff
+hunks of each change and allowing you to revert changes.
+
+This setting requires the `mini_diff` setting to be set to  `true` in your
+`Preferences.sublime-settings` file; when set to `false` or `"auto"` the
+`mini_diff_underlying` setting has no effect.
 
 
 ### `confirm_deletion` : true/false (Default: true) ###

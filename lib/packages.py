@@ -7,6 +7,7 @@ import codecs
 from datetime import datetime
 import difflib
 from collections import MutableSet, OrderedDict
+import glob
 import fnmatch
 
 from .metadata import default_metadata
@@ -143,7 +144,7 @@ def override_display(override_file, pkg_name=None):
 	return _fixPath(override_file)
 
 
-def check_potential_override(filename, deep=False):
+def check_potential_override(filename, deep=False, get_content=False):
 	"""
 	Given a filename path, check and see if this could conceivably be a
 	reference to an override; i.e. that there is a shipped or installed
@@ -152,6 +153,10 @@ def check_potential_override(filename, deep=False):
 	When deep is False, this only checks that the file could potentially be
 	an override. Set deep to True to actually look inside of the package
 	itself to see if this really represents an override or not.
+
+	When get_content is True and the filename represents an override, the
+	returned tuple will also contain as a third element the unpacked content
+	of the override; this requires deep to be set to True.
 
 	The filename provided must be either absolute(and point to the Packages
 	path) or relative (in which case it is assumed to point there).
@@ -180,12 +185,23 @@ def check_potential_override(filename, deep=False):
 		# sublime-package would represent the override path internally.
 		override = "/".join(parts[1:])
 		if not deep:
-			return (pkg_name, override)
+			return (pkg_name, override, None)
 
 		try:
 			with zipfile.ZipFile(installed or shipped) as zFile:
 				info = find_zip_entry(zFile, override)
-				return (pkg_name, info.filename)
+
+				content = None
+				if get_content:
+					# Make a stub PackageInfo with enough members filled out to
+					# fetch the appropriate content.
+					p_info = PackageInfo(pkg_name, scan=False)
+					p_info.shipped_path = shipped
+					p_info.installed_path = installed
+
+					content = p_info.packed_override_contents(info.filename, as_list=False)[1]
+
+				return (pkg_name, info.filename, content)
 		except:
 			pass
 
@@ -303,6 +319,7 @@ class PackageInfo():
 
 		self.name = name
 		self.metadata = {}
+		self.python_version = ""
 
 		self.is_dependency = False
 		self.is_disabled = True if name in ignored_list else False
@@ -492,6 +509,16 @@ class PackageInfo():
 		except:
 			return self.metadata.get("dependencies", [])
 
+	def __get_meta_file(self, resource):
+		try:
+			if self.contains_file(resource):
+				return self.get_file(resource)
+
+		except:
+			pass
+
+		return None
+
 	def _load_metadata(self):
 		res_name = "package-metadata.json"
 		if self.is_dependency:
@@ -500,14 +527,20 @@ class PackageInfo():
 		self.metadata = default_metadata(self)
 
 		try:
-			if self.contains_file(res_name):
-				data = self.get_file(res_name)
+			data = self.__get_meta_file(res_name)
+			if data:
 				self.metadata = sublime.decode_value(data)
 
 			if not self.is_dependency:
 				self.metadata["dependencies"] = self.__get_dependencies()
 		except:
 			pass
+
+		if self.contains_plugins():
+			self.python_version = "3.3"
+			data = self.__get_meta_file(".python-version")
+			if data:
+				self.python_version = data.strip()
 
 	def _get_packed_pkg_file_contents(self, override_file, as_list=True):
 		try:
@@ -828,6 +861,39 @@ class PackageInfo():
 
 		return False
 
+	def contains_plugins(self):
+		"""
+		Checks to see if this package contains any plugins or not, which is
+		defined as a .py file in the root of the package contents.
+		"""
+		def is_plugin(name):
+			if name.endswith(".py") and "/" not in name:
+				# Exclude syntax test files in the shipped Python package
+				return False if name.startswith("syntax_test") and self.name == "Python" else True
+
+			return False
+
+		try:
+			if self.package_file() is not None:
+				with zipfile.ZipFile(self.package_file()) as zFile:
+					for info in zFile.infolist():
+						if is_plugin(info.filename):
+							return True
+
+		except (FileNotFoundError):
+			pass
+
+		if self.unpacked_path:
+			path_len = len(self.unpacked_path) + 1
+			res_spec = os.path.join(self.unpacked_path, "*.py")
+			try:
+				next(f for f in glob.iglob(res_spec) if is_plugin(f[path_len:]))
+				return True
+			except:
+				pass
+
+		return False
+
 	def get_file(self, resource):
 		"""
 		Given a resource specification, get the contents of that resource and
@@ -904,6 +970,7 @@ class PackageInfo():
 			# Core info
 			"name": self.name,
 			"metadata": self.metadata,
+			"python_version": self.python_version,
 
 			# Installation Status
 			"is_shipped":   bool(self.shipped_path),
@@ -968,8 +1035,8 @@ class PackageList():
 			# Check if the package is a dependency and then load it's metadata.
 			pkg._check_if_depdendency()
 			pkg._load_metadata()
-			# Count it as a dependency
 
+			# Count it as a dependency
 			if pkg.is_dependency:
 				self._dependencies += 1
 

@@ -3,9 +3,11 @@ import sublime_plugin
 import os
 
 from .pkg_popup import show_pkg_popup
-from .core import override_group, delete_packed_override
-from ..lib.packages import check_potential_override
+from .core import oa_setting, override_group, delete_packed_override
+from .core import setup_override_minidiff
 
+
+###----------------------------------------------------------------------------
 
 
 class OverrideAuditEventListener(sublime_plugin.EventListener):
@@ -14,32 +16,20 @@ class OverrideAuditEventListener(sublime_plugin.EventListener):
 	override for a package, and set the variables that allow for our context
 	menus to let you edit/diff the override.
 	"""
-	def _check_for_override(self, view):
-		filename = view.file_name()
-		if filename is None or not os.path.isfile(filename):
-			return
-
-		result = check_potential_override(filename, deep=True)
-		if result is not None:
-			override_group.apply(view, result[0], result[1], False)
-		else:
-			override_group.remove(view)
-
 	def on_post_save_async(self, view):
 		# Will remove existing settings if the view is no longer an override
-		self._check_for_override(view)
+		setup_override_minidiff(view)
 
 	def on_load_async(self, view):
 		# Things like PackageResourceViewer trigger on_load before the file
 		# actually exists; context items are only allowed once the file is
 		# actually saved.
-		self._check_for_override(view)
+		setup_override_minidiff(view)
 
 	def on_close(self, view):
 		tmp_base = view.settings().get("_oa_ext_diff_base", None)
 		if tmp_base is not None:
 			delete_packed_override(tmp_base)
-
 
 	def on_hover(self, view, point, hover_zone):
 		if hover_zone != sublime.HOVER_TEXT:

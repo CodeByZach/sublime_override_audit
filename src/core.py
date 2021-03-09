@@ -18,7 +18,7 @@ import re
 
 from ..lib.packages import PackageInfo, PackageList, PackageFileSet
 from ..lib.packages import override_display, check_potential_override
-from ..lib.packages import find_zip_entry
+from ..lib.packages import find_zip_entry, check_potential_override
 from ..lib.output_view import output_to_view
 from ..lib.threads import BackgroundWorkerThread
 from ..lib.utils import SettingsGroup
@@ -60,12 +60,23 @@ def loaded():
 			"^\\.svn/",
 			"^\\.hg/"
 		],
+		"mini_diff_underlying": True,
+		# This is currently undocumented and may go away in the future.
+		"enable_hover_popup": True,
 
 		# Inherits from user preferences
 		"binary_file_patterns": None
 	}
 
 	PackageInfo.init()
+
+	# Restore the diff in any open overrides; this also cleans any views that
+	# used to be overrides but no longer aren't (e.g. if the sublime-package
+	# file was deleted while the plugin was not loaded).
+	for window in sublime.windows():
+		for view in window.views():
+			setup_override_minidiff(view)
+
 	AutoReportTrigger()
 
 
@@ -210,6 +221,35 @@ def decorate_pkg_name(pkg_info, name_only=False):
 			"U" if pkg_info.unpacked_path is not None else " ",
 			pkg_name,
 			suffix)
+
+
+def setup_override_minidiff(view):
+	"""
+	Check the view provided to see if it represents an edit session on a
+	package resource that is an override. If it isn't, or if the settings are
+	not set to indicate that the user wants the mini diff, this does nothing.
+
+	Otherwise, it will set up the reference document for this override to track
+	the base file.
+	"""
+	settings = sublime.load_settings("Preferences.sublime-settings")
+	mini_diff = settings.get("mini_diff")
+	mini_diff_underlying = oa_setting("mini_diff_underlying") and mini_diff is True
+
+
+	filename = view.file_name()
+	if (not mini_diff_underlying or
+		filename is None or not filename.startswith(sublime.packages_path()) or
+		not os.path.isfile(filename)):
+		return
+
+	result = check_potential_override(filename, deep=True, get_content=mini_diff_underlying)
+	if result is not None:
+		override_group.apply(view, result[0], result[1], False)
+		if result[2] is not None:
+			view.set_reference_document(result[2])
+	else:
+		override_group.remove(view)
 
 
 def open_override(window, pkg_name, override):
@@ -359,7 +399,11 @@ def diff_with_sublimerge(base_file, override_file):
 def revert_override(window, pkg_info, override):
 	if oa_setting("confirm_revert"):
 		target = override_display(os.path.join(pkg_info.name, override))
-		msg = "Confirm revert:\n\n{}".format(target)
+		msg = (
+			"Are you sure you want to continue?\n\n" +
+			"The current content of this override will be permanently lost; " +
+			"you can't undo this operation.\n\n" +
+			"Confirm revert:\n\n{}".format(target))
 
 		if sublime.yes_no_cancel_dialog(msg) != sublime.DIALOG_YES:
 			return
@@ -440,6 +484,37 @@ def delete_packed_override(filename):
 		log("Deleted temporary file '%s'", filename)
 	except:
 		log("Error deleting '%s'", filename)
+
+
+def setup_new_override_view(view, reposition=True):
+	"""
+	Given a view that represents a potential new override, set it up so that
+	our event handler will create an override on save. This presumes that the
+	view passed in is read-only; it will be marked as non-read-only once it is
+	finished loading. If the mini_diff setting is turned on, the reference
+	document will be set to the content of the buffer when this is called.
+
+	When reposition is True, the cursor is jumped to the start of the file, as
+	if the user just opened it from disk. Otherwise the cursor is left wherever
+	it was in the view to begin with.
+	"""
+	view.settings().set("_oa_is_new_override", True)
+	if view.is_loading():
+		return sublime.set_timeout(lambda: setup_new_override_view(view), 10)
+
+	settings = sublime.load_settings("Preferences.sublime-settings")
+	mini_diff = settings.get("mini_diff")
+
+	# File is left as a scratch buffer until the first modification
+	if reposition:
+		view.run_command("move_to", {"to": "bof"})
+	view.set_read_only(False)
+
+	# Sublime turns off mini_diff for packed files that it opens.
+	if mini_diff is True:
+		view.settings().set("mini_diff", mini_diff)
+		reference_doc = view.substr(sublime.Region(0, len(view)))
+		view.set_reference_document(reference_doc)
 
 
 ###----------------------------------------------------------------------------
@@ -1046,6 +1121,14 @@ class ContextHelper():
 		if ctx.package_only():
 			pkg_dir = os.path.join(sublime.packages_path(), ctx.package)
 			return os.path.isdir(pkg_dir)
+
+		return False
+
+	def package_overrides_possible(self, view, ctx):
+		if ctx.package_only():
+			pkgs = view.settings().get("override_audit_report_packages", {})
+			pkg_info = pkgs.get(ctx.package, {})
+			return pkg_info["is_shipped"] or pkg_info["is_installed"]
 
 		return False
 

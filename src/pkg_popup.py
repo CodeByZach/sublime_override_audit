@@ -2,16 +2,20 @@ import sublime
 import sublime_plugin
 import os
 
-from .core import override_group, delete_packed_override
-from ..lib.packages import check_potential_override
+from .core import oa_setting
 
 
 ###----------------------------------------------------------------------------
 
 
+# Help information available in popups via [?] links; the help is stored based
+# on the link name associated with it.
+#
+# Each topic may contain {pkg} to reference the name of the package being
+# displayed in the popup.
 _help = {
-	# Help description of what a complete override is; this is linked from the
-	# caption of the popup for packages that are complete overrides.
+	# Description for complete overrides; linked from the popup caption for
+	# complete overrides.
 	"complete_override":
 	"""
 	<h1>{pkg}</h1>
@@ -27,24 +31,25 @@ _help = {
 			package is <span class="complete">Completely</span> ignored.
 		</p><p>
 			When the header of the popup also mentions that the package is
-			<span class="expired">Expired</span>, the underlying <em>Shipped</em>
-			package has been updated; in this case the override may be masking
-			new features or bug fixes.
+			<span class="expired">Expired</span>, the underlying
+			<em>Shipped</em> package has been updated; in this case the
+			override may be masking new features or bug fixes from the
+			<em>Shipped</em> version of the package.
 		</p>
 	</div>
 	<a href="pkg:{pkg}">Back</a>
 	""",
 
-	# Help for why it's not possible for the current package to contain any
-	# overrides
+	# Description of why it's not possible for a package to contain any
+	# overrides.
 	"no_override":
 	"""
 	<h1>{pkg}</h1>
 	<div class="help_text">
 		<p>
-			In order for a package to support overridden package resources,
-			it must be represented by both a <b>sublime-package</b> file
-			(either <em>Shipped</em> or in the <em>Installed Packages</em>
+			In order for a package to support overridden resources, it must be
+			represented by both a <b>sublime-package</b> file (either
+			<em>Shipped</em> with Sublime or in the <em>Installed Packages</em>
 			folder) as well as being represented in the unpacked
 			<em>Packages</em> folder.
 		</p><p>
@@ -61,6 +66,9 @@ _help = {
 ###----------------------------------------------------------------------------
 
 
+# The overall style sheet used for the package popups. The colors defined here
+# all come from the current color scheme by using the var() syntax to pull the
+# closest color available.
 _css = """
 	body {
 		font-family: system;
@@ -121,12 +129,17 @@ _css = """
 		margin-top: -0.8rem;
 	}
 
-	.url {
+	.python {
 		font-size: 0.8rem;
 		line-height: 0.8rem;
 		margin-top: -0.8rem;
 	}
 
+	.url {
+		font-size: 0.8rem;
+		line-height: 0.8rem;
+		margin-top: -0.8rem;
+	}
 
 	.metadata {
 		font-size: 0.8rem;
@@ -148,6 +161,11 @@ _css = """
 		margin-bottom: 1rem;
 	}
 
+	.links {
+		font-size: 0.9rem;
+		margin-bottom: 1rem;
+	}
+
 	.help_text {
 		font-size: 0.9rem;
 		margin: 1rem;
@@ -157,8 +175,9 @@ _css = """
 		color: var(--cyanish);
 	}
 """
+# The overal HTML layout of the minihtml that makes up the popup. This will be
 
-
+# filled out with generated data based on the current package.
 _pkg_popup = """
 	<body id="overrideaudit-package-popup">
 		<style>
@@ -167,6 +186,18 @@ _pkg_popup = """
 		{body}
 	</body>
 """
+
+
+###----------------------------------------------------------------------------
+
+
+# Pick a CSS class based on the value provided; the default value for a False
+# value is autoselected for clarity but can be specified as desired.
+_class = lambda v, avail, missing="hidden": avail if v else missing
+
+# Choose between a singular and a plural based on the value provided; for the
+# ultimate in pedantism. The most common values default.
+_p = lambda v, one="resource", many="resources": one if v == 1 else many
 
 
 ###----------------------------------------------------------------------------
@@ -212,6 +243,7 @@ def _popup_header(view, details):
 	"""
 	metadata = details.get("metadata", {})
 	version = metadata.get("version", "")
+	python_version = details.get("python_version", "")
 	url = metadata.get("url", "")
 
 	if version == "" and not details.get("is_shipped", False):
@@ -235,15 +267,18 @@ def _popup_header(view, details):
 		<div class="{is_dependency}">This package is a dependency library</div>
 		<div class="{has_version}">Version: {version}</div>
 		<div class="{has_url}"><a href="{url}">{url}</a></div>
+		<div class="{has_python}">Python: {python_version}</div>
 	""".format(
 		name=name,
-		is_complete="complete" if is_complete else "hidden",
-		is_complete_expired="expired" if is_expired else "hidden",
-		is_disabled="disabled" if is_disabled else "hidden",
-		is_dependency="dependency" if is_dependency else "hidden",
-		has_version="version" if version != '' else "hidden",
+		is_complete=_class(is_complete, "complete"),
+		is_complete_expired=_class(is_expired, "expired"),
+		is_disabled=_class(is_disabled, "disabled"),
+		is_dependency=_class(is_dependency, "dependency"),
+		has_version=_class(version != '', "version"),
+		has_python=_class(python_version != "", "python"),
 		version=version,
-		has_url="url" if url != '' else "hidden",
+		python_version=python_version,
+		has_url=_class(url != '', "url"),
 		url=url
 	)
 
@@ -274,7 +309,7 @@ def _metadata(view, details):
 	</div>
 	""".format(
 		description=metadata.get("description", "No description provided"),
-		has_deps="depends" if is_dep or dep_list else "hidden",
+		has_deps=_class(is_dep or dep_list, "depends"),
 		title=title,
 		dependencies=dependencies
 		)
@@ -295,7 +330,7 @@ def _can_have_overrides(view, details):
 	else:
 		return """
 		<div class="overrides">
-		This package cannot contain overridden package resources.
+		This package currently does not contain overridden package resources.
 		<span class="help">[<a href="help:no_override:{pkg}">?</a>]</span>
 		</div>
 		""".format(pkg=details["name"])
@@ -313,27 +348,27 @@ def _override_details(view, details):
 
 	return """
 		<div class="{override_class}">
-			{overrides} overridden package resources
-			<span class="{expired_class}">({expired} potentially expired)</span>
+			{overrides} overridden package {o_desc}
+			<span class="{expired_class}">({expired} expired)</span>
 			<br>
-			<span class="{unknown_class}"> {unknown} unpacked resources not in the source package
+			<span class="{unknown_class}"> {unknown} unpacked {u_desc} not present in the source package
 				<span class={filtered_class}> ({filtered} being filtered)</span>
 			</span>
-			<br>
-			<span class="help">[<a href="diff_report:{pkg}">View Differences</a>]</span>
 		</div>
 		""".format(
 			pkg=details["name"],
-			override_class="overrides" if has_overrides else "hidden",
+			override_class=_class(has_overrides, "overrides"),
 			overrides=details["overrides"],
+			o_desc=_p(details["overrides"]),
 
-			expired_class="has_expired" if has_expired else "hidden",
+			expired_class=_class(has_expired, "has_expired"),
 			expired=details["expired_overrides"],
 
-			unknown_class="overrides" if has_unknown else "hidden",
+			unknown_class=_class(has_unknown, "overrides"),
 			unknown=details["unknown_overrides"],
+			u_desc=_p(details["unknown_overrides"]),
 
-			filtered_class="filtered" if has_filtered else "hidden",
+			filtered_class=_class(has_filtered, "filtered"),
 			filtered=details["unknowns_filtered"])
 
 
@@ -351,6 +386,27 @@ def _popup_footer(view, details):
 			installed="\u2611" if details["is_installed"] else "\u2610",
 			unpacked="\u2611" if details["is_unpacked"] else "\u2610")
 
+def _package_links(view, details):
+	"""
+	Generate a set of links for taking actions with this package. Each of the
+	links hides itself when it's not valid, and if none are valid the entire
+	section is hidden.
+	"""
+	can_create = details.get("is_shipped", False) or details.get("is_installed", False)
+	has_overrides = details.get("overrides", 0) > 0
+
+	return """
+		<div class="{link_class}">
+			<span class="{has_overrides}">[<a href="diff_report:{pkg}">View Differences</a>]</span>
+			<span class="{can_create}">[<a href="override:{pkg}">Create new override</a>]</span>
+			<br>
+		</div>
+	""".format(
+		link_class=_class(can_create or has_overrides, "links"),
+		has_overrides=_class(has_overrides, "overrides"),
+		can_create=_class(can_create, "overrides"),
+		pkg=details["name"])
+
 
 def _expand_details(view, details, is_detailed):
 	"""
@@ -362,11 +418,13 @@ def _expand_details(view, details, is_detailed):
 	{header}
 	{metadata}
 	{overrides}
+	{links}
 	{footer}
 	""".format(
 		header=_popup_header(view, details),
 		metadata=_metadata(view, details),
 		overrides=_override_details(view, details) if is_detailed else _can_have_overrides(view, details),
+		links=_package_links(view, details),
 		footer=_popup_footer(view, details)
 		)
 
@@ -414,6 +472,9 @@ def _popup_link(view, point, link_name, is_detailed):
 	elif link_name.startswith("diff_report:"):
 		package = link_name[len("diff_report:"):]
 		view.window().run_command("override_audit_diff_report", {"package": package})
+	elif link_name.startswith("override:"):
+		package = link_name[len("override:"):]
+		view.window().run_command("override_audit_create_override", {"package": package})
 	elif link_name.startswith("http"):
 		view.window().run_command("open_url", {"url": link_name})
 
@@ -431,6 +492,9 @@ def show_pkg_popup(view, point, link_name, is_detailed):
 	as the initial popup content. The popup may contain links, which will alter
 	the content in the popup when they're clicked.
 	"""
+	if not oa_setting("enable_hover_popup"):
+		return
+
 	body = _render_popup(view, link_name, is_detailed)
 	if body is not None:
 		view.show_popup(

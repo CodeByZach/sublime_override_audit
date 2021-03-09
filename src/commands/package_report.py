@@ -42,7 +42,8 @@ class PackageReportThread(ReportGenerationThread):
 		result.extend([r_sep, ""])
 
 		self._set_content("OverrideAudit: Package Report", result, ":packages", oa_syntax("OA-PkgReport"), {
-				"override_audit_report_packages": packages
+				"override_audit_report_packages": packages,
+				"context_menu": "OverrideAuditReport.sublime-menu"
 			})
 
 

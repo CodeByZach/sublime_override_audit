@@ -159,7 +159,7 @@ class ResourceBrowser():
 			overrides = pkg_info.override_files(simple=True)
 			if self.file_type == ResourceType.ALL:
 				if not self.annotate:
-				res_list = contents
+					res_list = contents
 				else:
 					res_list = contents - overrides
 					res_list |= {res + _annotation for res in overrides }

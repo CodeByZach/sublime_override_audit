@@ -1,5 +1,6 @@
 OverrideAudit
 =============
+[![Latest Release](https://img.shields.io/github/tag/CodeByZach/sublime_override_audit.svg?label=version)](https://github.com/CodeByZach/sublime_override_audit/releases)
 
 OverrideAudit is a package for Sublime Text 3 that helps you detect and work
 with your package overrides, allowing you to easily see a list of files that
@@ -289,7 +290,7 @@ override). This works similarly to the `Create Override` command except that
 here all package resources are displayed, and any that are overrides will be
 annotated in the panel.
 
-WHen a resource is selected, that file is opened for viewing. If the file is an
+When a resource is selected, that file is opened for viewing. If the file is an
 override, then you can edit the file as per normal; regular resources will be
 opened as read-only and require you to use the `Override Current Resource`
 command in order to make them editable.

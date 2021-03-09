@@ -234,8 +234,8 @@ def setup_override_minidiff(view):
 	"""
 	settings = sublime.load_settings("Preferences.sublime-settings")
 	mini_diff = settings.get("mini_diff")
-	mini_diff_underlying = oa_setting("mini_diff_underlying") and mini_diff is True
 
+	mini_diff_underlying = oa_setting("mini_diff_underlying") and mini_diff is True
 
 	filename = view.file_name()
 	if (not mini_diff_underlying or

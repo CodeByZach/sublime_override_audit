@@ -946,7 +946,6 @@ class PackageInfo():
 
 		result = u"".join(indent + line for line in diff)
 		return OverrideDiffResult(packed, unpacked, result, empty_msg=empty_result, indent=indent)
-								  empty_msg=empty_result, indent=indent)
 
 	def status(self, detailed=False):
 		"""

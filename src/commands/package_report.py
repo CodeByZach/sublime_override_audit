@@ -5,7 +5,6 @@ from ..core import oa_syntax, decorate_pkg_name
 from ..core import ReportGenerationThread
 from ...lib.packages import PackageList
 
-
 ###----------------------------------------------------------------------------
 
 

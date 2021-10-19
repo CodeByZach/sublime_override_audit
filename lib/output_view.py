@@ -74,13 +74,13 @@ def _restore_state(view, state):
 
 
 def output_to_view(window,
-                    title,
-                    content,
-                    reuse=True,
-                    clear=True,
-                    syntax=None,
-                    settings=None,
-                    current_view=None):
+                   title,
+                   content,
+                   reuse=True,
+                   clear=True,
+                   syntax=None,
+                   settings=None,
+                   current_view=None):
     """
     Add the content provided to a view in the given window, which has the title
     provided. This will create a new view unless one with the title provided

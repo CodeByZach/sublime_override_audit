@@ -21,7 +21,8 @@ class OverrideAuditDiffSingleCommand(sublime_plugin.WindowCommand):
     def _show_override_list(self, pkg_info):
         override_list = list(pkg_info.override_files())
         if not override_list:
-            log("Package '%s' has no overrides" % pkg_info.name, status=True, dialog=True)
+            log("Package '%s' has no overrides" % pkg_info.name,
+                 status=True, dialog=True)
 
         self.window.show_quick_panel(
             items=override_list,
@@ -42,7 +43,8 @@ class OverrideAuditDiffSingleCommand(sublime_plugin.WindowCommand):
         items = packages_with_overrides(pkg_list)
 
         if not items:
-            log("No unignored packages have overrides", status=True, dialog=True)
+            log("No unignored packages have overrides",
+                 status=True, dialog=True)
 
         self.window.show_quick_panel(
             items=items,
@@ -62,9 +64,11 @@ class OverrideAuditDiffSingleCommand(sublime_plugin.WindowCommand):
                     if pkg_info.has_possible_overrides():
                         diff_override(self.window, pkg_info, override)
                     else:
-                        log("Package '%s' has no overrides to diff" % package, status=True, dialog=True)
+                        log("Package '%s' has no overrides to diff" % package,
+                             status=True, dialog=True)
             else:
-                log("Unable to diff; no package '%s'" % package, status=True, dialog=True)
+                log("Unable to diff; no package '%s'" % package,
+                     status=True, dialog=True)
 
     def run(self, package=None, override=None, bulk=False,
             exclude_unchanged=False):
@@ -76,8 +80,10 @@ class OverrideAuditDiffSingleCommand(sublime_plugin.WindowCommand):
                                     })
             return
 
-        callback = lambda thread: self._loaded(thread, package, override, bulk, exclude_unchanged)
-        PackageListCollectionThread(self.window, "Collecting Package List", callback, get_overrides=True).start()
+        callback = lambda thread: self._loaded(thread, package, override,
+                                               bulk, exclude_unchanged)
+        PackageListCollectionThread(self.window, "Collecting Package List",
+                                    callback, get_overrides=True).start()
 
 
 ###----------------------------------------------------------------------------

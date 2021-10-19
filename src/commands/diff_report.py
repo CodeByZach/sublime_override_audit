@@ -27,16 +27,19 @@ class BulkDiffReportThread(ReportGenerationThread):
 
         if package is not None:
             if package not in pkg_list:
-                return log("Cannot diff package '%s'; not found" % package, status=True, dialog=True)
+                return log("Cannot diff package '%s'; not found" % package,
+                            status=True, dialog=True)
 
             if not pkg_list[package].package_file():
-                return log("Cannot diff package '%s'; no sublime-package file" % package, status=True, dialog=True)
+                return log("Cannot diff package '%s'; no sublime-package file" % package,
+                            status=True, dialog=True)
 
             items = [package]
         else:
             items = packages_with_overrides(pkg_list)
 
-        self._diff_packages(items, pkg_list, package is not None, force_reuse, exclude_unchanged)
+        self._diff_packages(items, pkg_list, package is not None, force_reuse,
+                            exclude_unchanged)
 
     def _diff_packages(self, names, pkg_list, single_package, force_reuse,
                        exclude_unchanged):
@@ -79,13 +82,15 @@ class BulkDiffReportThread(ReportGenerationThread):
                 pkg_info.set_binary_pattern(binary_patterns)
 
             pkg_result.append(decorate_pkg_name(pkg_info))
-            diff_count = self._perform_diff(pkg_info, context_lines, pkg_result, expired_pkgs, unknown_files, ignore_patterns, exclude_unchanged)
+            diff_count = self._perform_diff(pkg_info, context_lines, pkg_result,
+                                       expired_pkgs, unknown_files,
+                                       ignore_patterns, exclude_unchanged)
 
             if diff_count:
                 pkg_count += 1
                 result.extend(pkg_result)
 
-            packages[name] = pkg_info.status(detailed=True)
+                packages[name] = pkg_info.status(detailed=True)
 
         if not pkg_count and exclude_unchanged:
             if len(names) == 1 and single_package:
@@ -94,15 +99,16 @@ class BulkDiffReportThread(ReportGenerationThread):
                 result.append("No packages with modified resources were found")
 
         self._set_content(title, result, report_type, oa_syntax("OA-Diff"),
-                        {
+                          {
                             "override_audit_report_packages": packages,
                             "override_audit_expired_pkgs": expired_pkgs,
                             "override_audit_unknown_overrides": unknown_files,
                             "override_audit_exclude_unchanged": exclude_unchanged,
-                            "context_menu": "OverrideAuditReport.sublime-menu"
-                        })
+                            "context_menu": "OverrideAuditReport.sublime-menu"                            
+                          })
 
-    def _perform_diff(self, pkg_info, context_lines, result, expired_pkgs, unknown_files, ignore_patterns, exclude_unchanged):
+    def _perform_diff(self, pkg_info, context_lines, result, expired_pkgs,
+                      unknown_files, ignore_patterns, exclude_unchanged):
         override_list = pkg_info.override_files(simple=True)
         expired_list = pkg_info.expired_override_files(simple=True)
         unknown_overrides = pkg_info.unknown_override_files()
@@ -123,12 +129,17 @@ class BulkDiffReportThread(ReportGenerationThread):
         for file in pkg_files:
             excluded = False
             if file in unknown_overrides:
-                diff = OverrideDiffResult(None, None, (" " * 8) + "<File does not exist in the underlying package file; cannot diff>")
+                diff = OverrideDiffResult(None, None, (" " * 8) +
+                                          "<File does not exist in the underlying package file; cannot diff>")
             else:
-                diff = pkg_info.override_diff(file, context_lines, empty_result="No differences found", binary_result="<File is binary>", indent=8)
+                diff = pkg_info.override_diff(file, context_lines,
+                                              empty_result="No differences found",
+                                              binary_result="<File is binary>",
+                                              indent=8)
 
             if diff is None:
-                content = (" " * 8) + ("Error opening or decoding file; is it UTF-8 or Binary?")
+                content = (" " * 8) + ("Error opening or decoding file;"
+                                       " is it UTF-8 or Binary?")
             else:
                 prefix = diff.hdr if diff.is_empty and empty_diff_hdr else ""
                 content = prefix + diff.result
@@ -146,13 +157,14 @@ class BulkDiffReportThread(ReportGenerationThread):
                 else:
                     result.append("    {}".format(file))
 
-            result.extend([content, ""])
+                result.extend([content, ""])
 
         if not override_list and not unknown_overrides:
             if pkg_info.has_possible_overrides(simple=True):
                 result.append("    <No simple overrides found>")
             else:
-                reason = ("no sublime-package" if pkg_info.is_unpacked() else "no unpacked files")
+                reason = ("no sublime-package" if pkg_info.is_unpacked() else
+                          "no unpacked files")
                 result.append("    <No overrides possible; %s>" % reason)
         result.append("")
 

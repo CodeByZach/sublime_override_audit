@@ -45,7 +45,8 @@ class OverrideAuditCreateOverrideCommand(sublime_plugin.WindowCommand):
         # No unpacked file; verify the package contains the resource
         res = '/'.join([package, file])
         if "Packages/" + res not in sublime.find_resources(res.split('/')[-1]):
-            return log("'{0}' not found; cannot create override".format(file), dialog=True)
+            return log("'{0}' not found; cannot create override".format(
+                       file), dialog=True)
 
         self.window.run_command("open_file", {"file": "${packages}/" + res})
 

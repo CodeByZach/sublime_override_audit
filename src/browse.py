@@ -252,7 +252,9 @@ class PackageResourceBrowser():
     and resource selected; both will be None if the browse was canceled by the
     user.
     """
-    def __init__(self, pkg_name=None, resource=None, window=None, file_type=ResourceType.ALL, pkg_list=None, unknown=True, annotate_overrides=False, p_filter=None, on_done=None):
+    def __init__(self, pkg_name=None, resource=None, window=None,
+                 file_type=ResourceType.ALL, pkg_list=None, unknown=True,
+                 annotate_overrides=False, p_filter=None, on_done=None):
         self.pkg_name = pkg_name
         self.resource = resource
         self.window = window or sublime.active_window()

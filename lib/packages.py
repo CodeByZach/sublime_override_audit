@@ -280,7 +280,8 @@ class OverrideDiffResult():
 
     The optional indent value will be used to indent all values.
     """
-    def __init__(self, packed, unpacked, result, is_binary=False, empty_msg=None, indent=None):
+    def __init__(self, packed, unpacked, result, is_binary=False,
+                 empty_msg=None, indent=None):
         if packed is not None and unpacked is not None:
             self.hdr =  indent + "--- %s    %s\n" % (packed[1], packed[2])
             self.hdr += indent + "+++ %s    %s\n" % (unpacked[1], unpacked[2])
@@ -307,9 +308,9 @@ class PackageInfo():
     Holds meta information on an installed Sublime Text Package
 
     A package can exist in one or more of these three states:
-        * Shipped if it is a sublime-package that ships with Sublime Text
-        * Installed if it is a sublime-package installed in Installed Packages/
-        * Unpacked if there is a directory inside "Packages/" with that name
+       * Shipped if it is a sublime-package that ships with Sublime Text
+       * Installed if it is a sublime-package installed in Installed Packages/
+       * Unpacked if there is a directory inside "Packages/" with that name
 
     Stored paths are fully qualified names of either the sublime-package file
     or the directory where the unpacked package resides.
@@ -431,7 +432,8 @@ class PackageInfo():
             return self.zip_list[pkg_filename]
 
         if not zipfile.is_zipfile(pkg_filename):
-            raise zipfile.BadZipFile("Invalid sublime-package file '%s'" % pkg_filename)
+            raise zipfile.BadZipFile("Invalid sublime-package file '%s'" %
+                                     pkg_filename)
 
         with zipfile.ZipFile(pkg_filename) as zFile:
             self.zip_list[pkg_filename] = zFile.infolist()
@@ -569,11 +571,13 @@ class PackageInfo():
                 return (content, _fixPath(source), mtime)
 
         except (KeyError, FileNotFoundError):
-            print("Error loading %s:%s; cannot find file in sublime-package" % (self.package_file(), override_file))
+            print("Error loading %s:%s; cannot find file in sublime-package" %
+                  (self.package_file(), override_file))
             return None
 
         except UnicodeDecodeError:
-            print("Error loading %s:%s; unable to decode file contents" % (self.package_file(), override_file))
+            print("Error loading %s:%s; unable to decode file contents" %
+                  (self.package_file(), override_file))
             return None
 
     def _get_unpacked_override_contents(self, override_file):
@@ -814,7 +818,8 @@ class PackageInfo():
 
             for name in overrides:
                 zipinfo = self.override_file_zipinfo(name, simple)
-                base_time = (pkg_time if zipinfo is None else datetime(*zipinfo.date_time).timestamp())
+                base_time = (pkg_time if zipinfo is None else
+                             datetime(*zipinfo.date_time).timestamp())
                 file_time = os.path.getmtime(os.path.join(base_path, name))
 
                 if file_time is not None and base_time > file_time:
@@ -833,7 +838,8 @@ class PackageInfo():
         if not content:
             return (None, None)
 
-        return ("Installed" if self.installed_path else "Shipped", content[0])
+        return ("Installed" if self.installed_path else "Shipped",
+                content[0])
 
     def unpacked_override_contents(self, override_file):
         """
@@ -929,7 +935,8 @@ class PackageInfo():
         """
         self.binary_patterns = pattern_list
 
-    def override_diff(self, override_file, context_lines, empty_result=None, binary_result=None, indent=None):
+    def override_diff(self, override_file, context_lines, empty_result=None,
+                      binary_result=None, indent=None):
         """
         Calculate and return a unified diff of the override file provided. In
         the diff, the first file is the packed version of the file being used
@@ -938,7 +945,8 @@ class PackageInfo():
         indent = "" if indent is None else " " * indent
 
         if self._override_is_binary(override_file):
-            return OverrideDiffResult(None, None, binary_result, is_binary=True, indent=indent)
+            return OverrideDiffResult(None, None, binary_result,
+                                      is_binary=True, indent=indent)
 
         packed = self._get_packed_pkg_file_contents(override_file, as_list=True)
         unpacked = self._get_unpacked_override_contents(override_file)
@@ -952,7 +960,8 @@ class PackageInfo():
                                     context_lines)
 
         result = u"".join(indent + line for line in diff)
-        return OverrideDiffResult(packed, unpacked, result, empty_msg=empty_result, indent=indent)
+        return OverrideDiffResult(packed, unpacked, result,
+                                  empty_msg=empty_result, indent=indent)
 
     def status(self, detailed=False):
         """
@@ -1054,13 +1063,14 @@ class PackageList():
         Note that installed packages indicates the number of packages installed
         by the user into the Installed Packages/ folder.
         """
-        return (self._shipped, self._installed, self._unpacked, self._disabled, self._dependencies)
+        return (self._shipped, self._installed, self._unpacked,
+                self._disabled, self._dependencies)
 
     def __key(self, key):
         """
         Return the de facto key (package name) for the given key; returns the
         key untouched on case sensitive systems or when the key is not known.
-        """
+       """
         if self._case_list is not None:
             case_key = key.lower()
             if case_key in self._case_list:

@@ -14,7 +14,8 @@ from .core import oa_setting
 # Each topic may contain {pkg} to reference the name of the package being
 # displayed in the popup.
 _help = {
-    # Description for complete overrides; linked from the popup caption for complete overrides.
+    # Description for complete overrides; linked from the popup caption for
+    # complete overrides.
     "complete_override":
     """
     <h1>{pkg}</h1>
@@ -39,7 +40,8 @@ _help = {
     <a href="pkg:{pkg}">Back</a>
     """,
 
-    # Description of why it's not possible for a package to contain any overrides.
+    # Description of why it's not possible for a package to contain any
+    # overrides.
     "no_override":
     """
     <h1>{pkg}</h1>
@@ -372,7 +374,8 @@ def _override_details(view, details):
 
 def _popup_footer(view, details):
     """
-    Generate a footer for the package popup that indicates how the package is installed.
+    Generate a footer for the package popup that indicates how the package is
+    installed.
     """
     return """
         {shipped} <span class="status">Ships with Sublime</span> &nbsp; &nbsp;

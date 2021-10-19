@@ -10,33 +10,33 @@ from .contexts import *
 from .commands import *
 
 __all__ = [
-	# core
-	"core",
+    # core
+    "core",
 
-	# browse
-	"browse",
+    # browse
+    "browse",
 
-	# events/contexts
-	"OverrideAuditEventListener",
-	"CreateOverrideEventListener",
-	"OverrideAuditContextListener",
+    # events/contexts
+    "OverrideAuditEventListener",
+    "CreateOverrideEventListener",
+    "OverrideAuditContextListener",
 
-	# commands/*
-	"OverrideAuditPackageReportCommand",
-	"OverrideAuditOverrideReportCommand",
-	"OverrideAuditDiffReportCommand",
-	"OverrideAuditRefreshReportCommand",
-	"OverrideAuditToggleOverrideCommand",
-	"OverrideAuditCreateOverrideCommand",
-	"OverrideAuditContextCreateOverrideCommand",
-	"OverrideAuditDiffOverrideCommand",
-	"OverrideAuditRevertOverrideCommand",
-	"OverrideAuditDiffExternallyCommand",
-	"OverrideAuditEditOverrideCommand",
-	"OverrideAuditDeleteOverrideCommand",
-	"OverrideAuditFreshenOverrideCommand",
-	"OverrideAuditDiffPackageCommand",
-	"OverrideAuditFreshenPackageCommand",
-	"OverrideAuditDiffSingleCommand",
-	"OverrideAuditModifyMarkCommand"
+    # commands/*
+    "OverrideAuditPackageReportCommand",
+    "OverrideAuditOverrideReportCommand",
+    "OverrideAuditDiffReportCommand",
+    "OverrideAuditRefreshReportCommand",
+    "OverrideAuditToggleOverrideCommand",
+    "OverrideAuditCreateOverrideCommand",
+    "OverrideAuditContextCreateOverrideCommand",
+    "OverrideAuditDiffOverrideCommand",
+    "OverrideAuditRevertOverrideCommand",
+    "OverrideAuditDiffExternallyCommand",
+    "OverrideAuditEditOverrideCommand",
+    "OverrideAuditDeleteOverrideCommand",
+    "OverrideAuditFreshenOverrideCommand",
+    "OverrideAuditDiffPackageCommand",
+    "OverrideAuditFreshenPackageCommand",
+    "OverrideAuditDiffSingleCommand",
+    "OverrideAuditModifyMarkCommand"
 ]

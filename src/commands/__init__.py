@@ -1,10 +1,10 @@
 from ...override_audit import reload
 
 reload("src.commands", ["package_report", "override_report", "diff_report",
-	"refresh_report", "diff_single", "toggle_override", "create_override",
-	"diff_override", "edit_override", "delete_override", "freshen_override",
-	"diff_package", "diff_externally", "revert_override", "freshen_package",
-	   "modify_mark", "context_create_override"])
+    "refresh_report", "diff_single", "toggle_override", "create_override",
+    "diff_override", "edit_override", "delete_override", "freshen_override",
+    "diff_package", "diff_externally", "revert_override", "freshen_package",
+       "modify_mark", "context_create_override"])
 
 from .package_report import OverrideAuditPackageReportCommand
 from .override_report import OverrideAuditOverrideReportCommand
@@ -25,28 +25,28 @@ from .refresh_report import OverrideAuditRefreshReportCommand
 from .modify_mark import OverrideAuditModifyMarkCommand
 
 __all__ = [
-	# Report generation commands
-	"OverrideAuditPackageReportCommand",
-	"OverrideAuditOverrideReportCommand",
-	"OverrideAuditDiffReportCommand",
-	"OverrideAuditRefreshReportCommand",
+    # Report generation commands
+    "OverrideAuditPackageReportCommand",
+    "OverrideAuditOverrideReportCommand",
+    "OverrideAuditDiffReportCommand",
+    "OverrideAuditRefreshReportCommand",
 
-	# Override commands
-	"OverrideAuditToggleOverrideCommand",
-	"OverrideAuditCreateOverrideCommand",
-	"OverrideAuditContextCreateOverrideCommand",
-	"OverrideAuditDiffOverrideCommand",
-	"OverrideAuditDiffExternallyCommand",
-	"OverrideAuditRevertOverrideCommand",
-	"OverrideAuditEditOverrideCommand",
-	"OverrideAuditDeleteOverrideCommand",
-	"OverrideAuditFreshenOverrideCommand",
+    # Override commands
+    "OverrideAuditToggleOverrideCommand",
+    "OverrideAuditCreateOverrideCommand",
+    "OverrideAuditContextCreateOverrideCommand",
+    "OverrideAuditDiffOverrideCommand",
+    "OverrideAuditDiffExternallyCommand",
+    "OverrideAuditRevertOverrideCommand",
+    "OverrideAuditEditOverrideCommand",
+    "OverrideAuditDeleteOverrideCommand",
+    "OverrideAuditFreshenOverrideCommand",
 
-	# Package commands
-	"OverrideAuditDiffPackageCommand",
-	"OverrideAuditFreshenPackageCommand",
+    # Package commands
+    "OverrideAuditDiffPackageCommand",
+    "OverrideAuditFreshenPackageCommand",
 
-	# General
-	"OverrideAuditDiffSingleCommand",
-	"OverrideAuditModifyMarkCommand"
+    # General
+    "OverrideAuditDiffSingleCommand",
+    "OverrideAuditModifyMarkCommand"
 ]

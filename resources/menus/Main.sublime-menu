@@ -6,8 +6,8 @@
         "children":
         [
             {
-                "id": "packages",
                 "caption": "Packages",
+                "id": "packages",
                 "children":
                 [
                     {
@@ -15,20 +15,20 @@
                         "id": "override-audit",
                         "children":
                         [
-                            { "caption": "Open Resource…", "command": "override_audit_create_override", "args": { "include_existing": true } },
-                            { "caption": "Create Override…", "command": "override_audit_create_override" },
-                            { "caption": "Override Current Resource", "command": "override_audit_context_create_override" },
+                            { "caption": "Open Resource…",                                "command": "override_audit_create_override",           "args": { "include_existing": true } },
+                            { "caption": "Create Override…",                              "command": "override_audit_create_override" },
+                            { "caption": "Override Current Resource",                     "command": "override_audit_context_create_override" },
                             { "caption": "-" },
-                            { "caption": "Package Report", "command": "override_audit_package_report" },
-                            { "caption": "Override Report", "command": "override_audit_override_report" },
-                            { "caption": "Override Report (Only expired)", "command": "override_audit_override_report", "args": { "only_expired": true } },
-                            { "caption": "Override Report (Exclude unchanged)", "command": "override_audit_override_report", "args": { "exclude_unchanged": true } },
-                            { "caption": "Diff Single Override…", "command": "override_audit_diff_single" },
-                            { "caption": "Bulk Diff: Single Package…", "command": "override_audit_diff_single", "args": { "bulk": true } },
-                            { "caption": "Bulk Diff: All Packages", "command": "override_audit_diff_report" },
-                            { "caption": "Bulk Diff: All Packages (Excluding unchanged)", "command": "override_audit_diff_report", "args": { "exclude_unchanged": true } },
-                            { "caption": "Refresh Current Report", "command": "override_audit_refresh_report" },
-                            { "caption": "Swap Diff/Edit of Current Override", "command": "override_audit_toggle_override" }
+                            { "caption": "Package Report",                                "command": "override_audit_package_report" },
+                            { "caption": "Override Report",                               "command": "override_audit_override_report" },
+                            { "caption": "Override Report (Only expired)",                "command": "override_audit_override_report",           "args": { "only_expired": true } },
+                            { "caption": "Override Report (Exclude unchanged)",           "command": "override_audit_override_report",           "args": { "exclude_unchanged": true } },
+                            { "caption": "Diff Single Override…",                         "command": "override_audit_diff_single" },
+                            { "caption": "Bulk Diff: Single Package…",                    "command": "override_audit_diff_single",               "args": { "bulk": true } },
+                            { "caption": "Bulk Diff: All Packages",                       "command": "override_audit_diff_report" },
+                            { "caption": "Bulk Diff: All Packages (Excluding unchanged)", "command": "override_audit_diff_report",               "args": { "exclude_unchanged": true } },
+                            { "caption": "Refresh Current Report",                        "command": "override_audit_refresh_report" },
+                            { "caption": "Swap Diff/Edit of Current Override",            "command": "override_audit_toggle_override" }
                         ]
                     }
                 ]
@@ -63,7 +63,7 @@
                             { "caption": "-" },
                             {
                                 "caption": "Key Bindings",
-                                "command": "edit_settings",
+                                "command": "z_edit_settings",
                                 "args":
                                 {
                                     "base_file": "${packages}/OverrideAudit/resources/keymaps/Default (${platform}).sublime-keymap",
@@ -80,28 +80,7 @@
                                         "command": "z_edit_settings",
                                         "args":
                                         {
-                                            "is_parent_setting": "1",
-                                            "base_file": "${packages}/OverrideAudit/resources/menus/Context.sublime-menu",
-                                            "default": "[\n\t$0\n]\n"
-                                        }
-                                    },
-                                    {
-                                        "caption": "Side Bar Menu",
-                                        "command": "z_edit_settings",
-                                        "args":
-                                        {
-                                            "is_parent_setting": "1",
-                                            "base_file": "${packages}/OverrideAudit/resources/menus/Side Bar.sublime-menu",
-                                            "default": "[\n\t$0\n]\n"
-                                        }
-                                    },
-                                    {
-                                        "caption": "Tab Menu",
-                                        "command": "z_edit_settings",
-                                        "args":
-                                        {
-                                            "is_parent_setting": "1",
-                                            "base_file": "${packages}/OverrideAudit/resources/menus/Tab Context.sublime-menu",
+                                            "base_file": "${packages}/OverrideAudit/Context.sublime-menu",
                                             "default": "[\n\t$0\n]\n"
                                         }
                                     },
@@ -110,8 +89,43 @@
                                         "command": "z_edit_settings",
                                         "args":
                                         {
-                                            "is_parent_setting": "1",
-                                            "base_file": "${packages}/OverrideAudit/resources/menus/Main.sublime-menu",
+                                            "base_file": "${packages}/OverrideAudit/Main.sublime-menu",
+                                            "default": "[\n\t$0\n]\n"
+                                        }
+                                    },
+                                    {
+                                        "caption": "Side Bar Menu",
+                                        "command": "z_edit_settings",
+                                        "args":
+                                        {
+                                            "base_file": "${packages}/OverrideAudit/Side Bar.sublime-menu",
+                                            "default": "[\n\t$0\n]\n"
+                                        }
+                                    },
+                                    {
+                                        "caption": "Side Bar Open Files Menu",
+                                        "command": "z_edit_settings",
+                                        "args":
+                                        {
+                                            "base_file": "${packages}/OverrideAudit/Tab Sidebar Context.sublime-menu",
+                                            "default": "[\n\t$0\n]\n"
+                                        }
+                                    },
+                                    {
+                                        "caption": "Tab Menu",
+                                        "command": "z_edit_settings",
+                                        "args":
+                                        {
+                                            "base_file": "${packages}/OverrideAudit/Tab Context.sublime-menu",
+                                            "default": "[\n\t$0\n]\n"
+                                        }
+                                    },
+                                    {
+                                        "caption": "Widget Menu",
+                                        "command": "z_edit_settings",
+                                        "args":
+                                        {
+                                            "base_file": "${packages}/OverrideAudit/Widget Context.sublime-menu",
                                             "default": "[\n\t$0\n]\n"
                                         }
                                     }
@@ -122,8 +136,7 @@
                                 "command": "z_edit_settings",
                                 "args":
                                 {
-                                    "is_parent_setting": "1",
-                                    "base_file": "${packages}/OverrideAudit/resources/commands/OverrideAudit.sublime-commands",
+                                    "base_file": "${packages}/OverrideAudit/resources/commands/Default.sublime-commands",
                                     "default": "[\n\t$0\n]\n"
                                 }
                             },
@@ -131,18 +144,12 @@
                             {
                                 "caption": "Documentation",
                                 "command": "open_url",
-                                "args":
-                                {
-                                    "url": "https://odatnurd.net/overrideaudit/docs/"
-                                }
+                                "args": { "url": "https://odatnurd.net/overrideaudit/docs/" }
                             },
                             {
                                 "caption": "README",
                                 "command": "open_file",
-                                "args":
-                                {
-                                    "file": "${packages}/OverrideAudit/README.md"
-                                }
+                                "args": { "file": "${packages}/OverrideAudit/README.md" }
                             }
                         ]
                     }

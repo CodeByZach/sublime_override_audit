@@ -3,7 +3,8 @@
     {
         "keys": ["alt+o"],
         "command": "override_audit_toggle_override",
-        "context": [
+        "context":
+        [
             { "key": "override_audit_override_view" }
         ]
     },
@@ -12,7 +13,8 @@
     {
         "keys": ["f5"],
         "command": "override_audit_refresh_report",
-        "context": [
+        "context":
+        [
             { "key": "override_audit_report_view" }
         ]
     }

@@ -19,7 +19,7 @@
                             { "caption": "Create Override…",                              "command": "override_audit_create_override" },
                             { "caption": "Override Current Resource",                     "command": "override_audit_context_create_override" },
                             { "caption": "Revert Current Override",                       "command": "override_audit_revert_override" },
-                            { "caption": "Delete Current Override",                       "command": "override_audit_delete_override",           "args": { "action": "delete" } }
+                            { "caption": "Delete Current Override",                       "command": "override_audit_delete_override",           "args": { "action": "delete" } },
                             { "caption": "-" },
                             { "caption": "Package Report",                                "command": "override_audit_package_report" },
                             { "caption": "Override Report",                               "command": "override_audit_override_report" },
@@ -31,7 +31,7 @@
                             { "caption": "Bulk Diff: All Packages (Excluding unchanged)", "command": "override_audit_diff_report",               "args": { "exclude_unchanged": true } },
                             { "caption": "Open Diff Externally",                          "command": "override_audit_diff_externally",           "args": { "action": "open_external" } },
                             { "caption": "Swap Diff/Edit of Current Override",            "command": "override_audit_toggle_override" },
-                            { "caption": "Refresh Current Report",                        "command": "override_audit_refresh_report" },
+                            { "caption": "Refresh Current Report",                        "command": "override_audit_refresh_report" }
                         ]
                     }
                 ]

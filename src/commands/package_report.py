@@ -1,4 +1,3 @@
-import sublime
 import sublime_plugin
 
 from ..core import oa_syntax, decorate_pkg_name
@@ -16,7 +15,7 @@ class PackageReportThread(ReportGenerationThread):
         pkg_list = PackageList()
         pkg_counts = pkg_list.package_counts()
 
-        title = "{} Total Packages".format(len(pkg_list))
+        title = f"{len(pkg_list)} Total Packages"
         t_sep = "=" * len(title)
 
         fmt = '{{:>{}}}'.format(len(str(max(pkg_counts))))
@@ -24,9 +23,8 @@ class PackageReportThread(ReportGenerationThread):
                  "{0} [I]nstalled (user) sublime-package files\n"
                  "{0} [U]npacked in Packages\\ directory\n"
                  "{0} Currently in ignored_packages\n"
-                 "{0} Installed Dependencies\n").format(fmt).format(*pkg_counts)
+                 "{0} Installed Legacy-style Dependencies\n").format(fmt).format(*pkg_counts)
 
-        row = "| {:<40} | {:3} | {:3} | {:<3} |".format("", "", "", "")
         r_sep = "+------------------------------------------+-----+-----+-----+"
 
         packages = {}

@@ -1,4 +1,3 @@
-import sublime
 import sublime_plugin
 
 from ..core import oa_syntax, oa_setting, decorate_pkg_name, log
@@ -20,7 +19,6 @@ class BulkDiffReportThread(ReportGenerationThread):
     """
     def _process(self):
         package = self.args["package"]
-        force_reuse = self.args["force_reuse"]
         exclude_unchanged = self.args["exclude_unchanged"]
 
         pkg_list = PackageList(package)
@@ -38,11 +36,9 @@ class BulkDiffReportThread(ReportGenerationThread):
         else:
             items = packages_with_overrides(pkg_list)
 
-        self._diff_packages(items, pkg_list, package is not None, force_reuse,
-                            exclude_unchanged)
+        self._diff_packages(items, pkg_list, package is not None, exclude_unchanged)
 
-    def _diff_packages(self, names, pkg_list, single_package, force_reuse,
-                       exclude_unchanged):
+    def _diff_packages(self, names, pkg_list, single_package, exclude_unchanged):
         context_lines = oa_setting("diff_context_lines")
         binary_patterns = oa_setting("binary_file_patterns")
 
@@ -57,19 +53,19 @@ class BulkDiffReportThread(ReportGenerationThread):
         packages = {}
 
         if exclude_unchanged:
-            result.append("WARNING: Showing only modified overrides!\n"
+            result.append("WARNING: Showing only modified overrides!\n" +
                           "WARNING: Overrides with unchanged content may exist!\n")
 
         if len(names) == 1 and single_package:
             title += names[0]
-            result.append(description + " {}\n".format(names[0]))
+            result.append(f"{description} {names[0]}\n")
             report_type = names[0]
         elif len(names) == 0:
             title += "All Packages"
             result.append("No packages with overrides found to diff\n")
         else:
             title += "All Packages"
-            result.append(description + " {} packages\n".format(len(names)))
+            result.append(f"{description} {len(names)} packages\n")
 
         result.append(self._generation_time())
 
@@ -94,7 +90,7 @@ class BulkDiffReportThread(ReportGenerationThread):
 
         if not pkg_count and exclude_unchanged:
             if len(names) == 1 and single_package:
-                result.append("Package {} has no unmodified resources".format(names[0]))
+                result.append(f"Package {names[0]} has no unmodified resources")
             else:
                 result.append("No packages with modified resources were found")
 
@@ -104,7 +100,7 @@ class BulkDiffReportThread(ReportGenerationThread):
                             "override_audit_expired_pkgs": expired_pkgs,
                             "override_audit_unknown_overrides": unknown_files,
                             "override_audit_exclude_unchanged": exclude_unchanged,
-                            "context_menu": "OverrideAuditReport.sublime-menu"                            
+                            "context_menu": "OverrideAuditReport.sublime-menu"
                           })
 
     def _perform_diff(self, pkg_info, context_lines, result, expired_pkgs,
@@ -145,17 +141,17 @@ class BulkDiffReportThread(ReportGenerationThread):
                 content = prefix + diff.result
 
                 if exclude_unchanged and diff.is_empty:
-                    log("Excluded from report: %s", file)
+                    log(f"Excluded from report: {pkg_info.name}/{file}")
                     excluded = True
 
             if not excluded:
                 changes_reported += 1
                 if file in expired_list:
-                    result.append("    [X] {}".format(file))
+                    result.append(f"    [X] {file}")
                 elif file in unknown_overrides:
-                    result.append("    [?] {}".format(file))
+                    result.append(f"    [?] {file}")
                 else:
-                    result.append("    {}".format(file))
+                    result.append(f"    {file}")
 
                 result.extend([content, ""])
 

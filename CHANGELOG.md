@@ -1,6 +1,44 @@
 OverrideAudit ChangeLog
 =======================
 
+Version 3.0.0 (2025-06-06)
+--------------------------
+
+  * Switch the minimum build of Sublime Text required from
+    `4126` to `4200`, since in the next dev cycle the plugin
+    host landscape will change.
+
+  * Update OverrideAudit to officially use the Python 3.8
+    plugin host rather than the legacy plugin host.
+
+  * Fix some minor edge case bugs that could trigger in
+    obscure cases and cause console errors.
+
+  * Fix an issue with the package hover popup for some
+    reports displaying an incorrect count of overrides.
+
+  * Update handling of the Python version that displays in
+    the hover popup so that it always displays even if
+    there are no plugins, and make the reported version
+    more correct based on upcoming changes to the Python
+    version used by Sublime.
+
+  * If a package declares an invalid Python version,
+    mention in the hover popup that plugins are ignored in
+    that package as a result (Sublime displays a message to
+    this effect in the console when the package loads).
+
+  * Update the metadata that's used to provide information
+    for packages that ship with Sublime directly to include
+    new packages that have been added to the standard
+    Sublime distribution.
+
+  * Mark the dependencies that display in the package report
+    as "legacy-style" dependencies, since with PC 4+, all
+    most all dependencies are installed as actual libraries
+    outside of the Packages folder.
+
+
 Version 2.2.7 (2024-02-21)
 
   * Fix the documentation link in the command palette, which

@@ -1,6 +1,4 @@
 import sublime
-import sublime_plugin
-import os
 
 from .core import oa_setting
 
@@ -283,6 +281,11 @@ _css = """
         color: var(--orangish);
     }
 
+    .code {
+        font-family: monospace;
+        color: var(--bluish);
+    }
+
     h1 span {
         font-size: 0.80rem;
         position: relative;
@@ -418,7 +421,7 @@ def _get_dependant_packages(view, details):
     return dependants
 
 
-def _popup_header(view, details):
+def _popup_header(details):
     """
     Given the status details of a package, return back the header for the
     popup that describes this package. This contains the name of the package
@@ -430,8 +433,9 @@ def _popup_header(view, details):
     """
     metadata = details.get("metadata", {})
     version = metadata.get("version", "")
-    python_version = details.get("python_version", "")
     url = metadata.get("url", "")
+    python_version = (details.get("python_version", "")
+                      or "package has no plugins")
 
     if version == "" and not details.get("is_shipped", False):
         version = "unknown version"
@@ -454,7 +458,7 @@ def _popup_header(view, details):
         <div class="{is_dependency}">This package is a dependency library</div>
         <div class="{has_version}">Version: {version}</div>
         <div class="{has_url}"><a href="{url}">{url}</a></div>
-        <div class="{has_python}">Python: {python_version}</div>
+        <div class="python">Python: {python_version}</div>
     """.format(
         name=name,
         is_complete=_class(is_complete, "complete"),
@@ -462,7 +466,6 @@ def _popup_header(view, details):
         is_disabled=_class(is_disabled, "disabled"),
         is_dependency=_class(is_dependency, "dependency"),
         has_version=_class(version != '', "version"),
-        has_python=_class(python_version != "", "python"),
         version=version,
         python_version=python_version,
         has_url=_class(url != '', "url"),
@@ -502,7 +505,7 @@ def _metadata(view, details):
         )
 
 
-def _can_have_overrides(view, details):
+def _can_have_overrides(details):
     """
     For non-detailed hover popups, this returns an indication of whether or not
     the package in the details can possibly contain overrides or not.
@@ -523,7 +526,7 @@ def _can_have_overrides(view, details):
         """.format(pkg=details["name"])
 
 
-def _override_details(view, details):
+def _override_details(details):
     """
     For detailed hover popups, this returns information on the count of
     overrides and their various types.
@@ -533,8 +536,13 @@ def _override_details(view, details):
     has_unknown = details["unknown_overrides"] > 0
     has_filtered = details["unknowns_filtered"] > 0
 
+    # Possible overrides controls the second section, for when we know there
+    # might be overrides, but we don't know how many there are; so only flag
+    # it when we know there are some but don't know how many there are.
+    possible_overrides = details["has_possible_overrides"] and details["overrides"] < 0
+
     return """
-        <div class="{override_class}">
+        <div class="{has_overrides_class}">
             {overrides} overridden package {o_desc}
             <span class="{expired_class}">({expired} expired)</span>
             <br>
@@ -542,9 +550,12 @@ def _override_details(view, details):
                 <span class={filtered_class}> ({filtered} being filtered)</span>
             </span>
         </div>
+        <div class="{possible_overrides_class}">
+            This package may contain overrides; use <span class="code">View Diferences</span> to perform a scan.
+        </div>
         """.format(
             pkg=details["name"],
-            override_class=_class(has_overrides, "overrides"),
+            has_overrides_class=_class(has_overrides, "overrides"),
             overrides=details["overrides"],
             o_desc=_p(details["overrides"]),
 
@@ -555,11 +566,13 @@ def _override_details(view, details):
             unknown=details["unknown_overrides"],
             u_desc=_p(details["unknown_overrides"]),
 
+            possible_overrides_class=_class(possible_overrides, "overrides"),
+
             filtered_class=_class(has_filtered, "filtered"),
             filtered=details["unknowns_filtered"])
 
 
-def _popup_footer(view, details):
+def _popup_footer(details):
     """
     Generate a footer for the package popup that indicates how the package is
     installed.
@@ -573,14 +586,19 @@ def _popup_footer(view, details):
             installed="\u2611" if details["is_installed"] else "\u2610",
             unpacked="\u2611" if details["is_unpacked"] else "\u2610")
 
-def _package_links(view, details):
+def _package_links(details):
     """
     Generate a set of links for taking actions with this package. Each of the
     links hides itself when it's not valid, and if none are valid the entire
     section is hidden.
     """
     can_create = details.get("is_shipped", False) or details.get("is_installed", False)
-    has_overrides = details.get("overrides", 0) > 0
+
+    # Only consider that we have overrides (and thus should allow you to open
+    # a diff of them) if it's possible to have overrides and the number is
+    # either -1 (did not check) or some number > 0 (there are some). A value of
+    # 0 means we looked and there are none.
+    has_overrides = details.get("has_possible_overrides", False) and details.get("overrides", -1) != 0
 
     return """
         <div class="{link_class}">
@@ -608,11 +626,11 @@ def _expand_details(view, details, is_detailed):
     {links}
     {footer}
     """.format(
-        header=_popup_header(view, details),
+        header=_popup_header(details),
         metadata=_metadata(view, details),
-        overrides=_override_details(view, details) if is_detailed else _can_have_overrides(view, details),
-        links=_package_links(view, details),
-        footer=_popup_footer(view, details)
+        overrides=_override_details(details) if is_detailed else _can_have_overrides(details),
+        links=_package_links(details),
+        footer=_popup_footer(details)
         )
 
     return result

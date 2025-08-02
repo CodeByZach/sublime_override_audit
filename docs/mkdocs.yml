@@ -1,8 +1,8 @@
-site_name: 'OverrideAudit'
+site_name: OverrideAudit Documentation
 site_author: Terence Martin (OdatNurd)
-site_url: 'https://overrideaudit.odatnurd.net'
-repo_url: 'https://github.com/OdatNurd/OverrideAudit'
-edit_uri: !ENV [EDIT_URI, '']
+site_url: https://codebyzach.github.io/sublime_override_audit
+repo_url: https://github.com/CodeByZach/sublime_override_audit
+edit_uri: tree/master/docs/src/content
 copyright: '&copy {{ current_year }} <a href="https://odatnurd.net">OdatNurd</a>'
 
 docs_dir: content
@@ -36,30 +36,14 @@ nav:
 
 extra:
   social:
-    - icon: material/web
-      link: https://odatnurd.net
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/OdatNurd
-    - icon: fontawesome/brands/bluesky
-      link: https://bsky.app/profile/odatnurd.bsky.social
-    - icon: fontawesome/brands/youtube
-      link: https://www.youtube.com/c/OdatNurd
-    - icon: fontawesome/brands/discord
-      link: https://discord.gg/b3x5AuwVVY
-    - icon: fontawesome/brands/twitch
-      link: https://twitch.tv/odatnurd
-    - icon: fontawesome/brands/stack-exchange
-      link: https://stackoverflow.com/users/814803/odatnurd?tab=profile
-    - icon: fontawesome/brands/github-alt
-      link: https://github.com/odatnurd
+    - icon: fontawesome/brands/github
+      link: https://github.com/CodeByZach
+      name: CodeByZach on GitHub
   generator: true
 
 theme:
   name: material
   language: en
-  # Theme overrides can be used to alter the theme based on the build; used to
-  # make dev releases have a permanent banner. Empty means no overrides.
-  custom_dir: !ENV [THEME_OVERRIDE, '']
   features:
     - content.action.edit
     - content.action.view

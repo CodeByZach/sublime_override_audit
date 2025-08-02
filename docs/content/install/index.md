@@ -81,7 +81,7 @@ installation instructions
 
 If you're unable to use Package Control to install OverrideAudit, it's also
 possible to perform a manual installation by cloning the package source from
-its [GitHub repository](https://github.com/OdatNurd/OverrideAudit){: target="_blank" class="external-link" }
+its [GitHub repository](https://github.com/CodeByZach/sublime_override_audit){: target="_blank" class="external-link" }
 into your local `Packages` directory, which you can locate by selecting the
 `Browse Packages` command from the command palette or from the `Preferences`
 menu.

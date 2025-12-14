@@ -1,17 +1,19 @@
-import imp
+import importlib
 import sys
 
 
 ###----------------------------------------------------------------------------
 
 
-def reload(prefix, modules=[""]):
+def reload(prefix, modules=None):
+    if modules is None:
+        modules = [""]
     prefix = "OverrideAudit.%s." % prefix
 
     for module in modules:
         module = (prefix + module).rstrip(".")
         if module in sys.modules:
-            imp.reload(sys.modules[module])
+            importlib.reload(sys.modules[module])
 
 
 ###----------------------------------------------------------------------------

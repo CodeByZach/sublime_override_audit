@@ -6,7 +6,8 @@ import zipfile
 import codecs
 from datetime import datetime
 import difflib
-from collections import MutableSet, OrderedDict
+from collections import OrderedDict
+from collections.abc import MutableSet
 from glob import glob, iglob
 import fnmatch
 
@@ -610,7 +611,7 @@ class PackageInfo():
             # If the version is not valid, Sublime ignores plugins in the
             # package.
             if version not in versions:
-                return f"{version} (invalid version; plugins are ignored in this package)"
+                return f"{version} (invalid version; plugins may be ignored in this package)"
 
             return version
 

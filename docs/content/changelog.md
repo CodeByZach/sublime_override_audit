@@ -9,6 +9,21 @@ description: The release history for OverrideAudit
 This is the latest version of OverrideAudit, targeting Sublime Text builds of
 4200 and newer (Sublime Text 4).
 
+### 3.0.1 (2025-10-29)
+
+  - Small update to make OverrideAudit compatible with the new Python 3.13
+    plugin host introduces in Sublime Text 4201+, with thanks to @jfcherng.
+
+  - Documentation fixes related to settings file locations in menus being
+    incorrect, with thanks to @vwheeler63.
+
+  - Small change to the verbiage used in hover popups when a package contains a
+    `.python-version` file that specifies an invalid Python version. Previously
+    Sublime would ignore plugins in such a package. For now, Python 3.8 is
+    interpreted as the latest Python version supported by Sublime, and when
+    Python 3.3 goes away, .python-version files will no longer be used.
+
+
 ### 3.0.0 (2025-06-06)
 
   - Updated the minimum required version of Sublime Text to be `4200` going
